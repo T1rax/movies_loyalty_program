@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "movies-loyalty-program"
+version = "0.1.0"
+description = "Api of the loyalty service"
+authors = ["The best developers on the yandex-practicum ever"]
+readme = "README.md"
+packages = [{include = "movies_loyalty_program"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+fastapi = "0.98.0"
+gunicorn = "20.1.0"
+click = "8.1.3"
+orjson = "3.9.1"
+python-dotenv = "1.0.0"
+uvicorn = "0.22.0"
+dependency-injector = "4.41.0"
+dpath = "2.1.6"
+asyncpg = "0.27.0"
+ujson = "5.8.0"
+aio-pika = "9.1.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "7.4.0"
+pytest-asyncio = "0.21.0"
+httpx = "0.24.1"
+# linters
+black = "23.3.0"
+isort = "5.12.0"
+flake8 = "6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

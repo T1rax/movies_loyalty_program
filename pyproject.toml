@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "movies-loyalty-program"
+version = "0.1.0"
+description = "Loyalty program for online cinema"
+authors = ["The best developers on the yandex-practicum ever"]
+readme = "README.md"
+packages = [{include = "movies_loyalty_program"}]
+
+[tool.poetry.dependencies]
+python = "~3.11"
+
+[tool.poetry.group.dev.dependencies]
+black = "23.3.0"
+isort = "5.12.0"
+flake8 = "6.0.0"
+mypy = "1.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+target-version = ['py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    .venv
+    | venv
+    | migrations
+    | rabbitmq
+)/
+'''
+
+[tool.isort]
+line_length = 79
+combine_as_imports = true
+include_trailing_comma = true
+lines_after_imports = 2
+skip = [".venv", "venv", "migrations", "rabbitmq"]
+
+[tool.mypy]
+exclude = ['tests','docs','nginx','loyalty_api']
+ignore_missing_imports = true

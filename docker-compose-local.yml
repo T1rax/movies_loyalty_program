@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+
+  db:
+    ports:
+      - "6668:5432"
+
+#  migration:
+#    environment:
+#      - DATABASE_URL=postgresql://app:123qwe@localhost:6668/loyalty
+
+  loyalty_api:
+    environment:
+      - DATABASE_URL=postgresql://app:123qwe@db:5432/loyalty
+    ports:
+      - "8006:8006"
+
+#  rabbitmq:
+#    ports:
+#      - "8020:15672"
+#      - "8030:5672"
