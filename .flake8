@@ -1,0 +1,4 @@
+[flake8]
+ignore = E126,E127,E731,W605,W503,E501,E203,E231,F541,F403,F405,F821,E402,Q000
+max-line-length = 79
+exclude = .venv,venv,migrations,rabbitmq
