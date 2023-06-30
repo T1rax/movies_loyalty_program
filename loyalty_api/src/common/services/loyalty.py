@@ -12,3 +12,6 @@ class LoyaltyService:
         repository: LoyaltyRepository,
     ):
         self._repository = repository
+
+    async def create_promo(self):
+        pass
