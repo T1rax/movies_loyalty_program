@@ -1,12 +1,12 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from src import settings
-from src.api.models.promo import PromoModel
 from src.common.responses import ApiResponse, wrap_response
 from src.common.services.loyalty import LoyaltyService
 from src.containers import Container
 from starlette import status
 
+from src.api.models.promo import PromoInput
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ router = APIRouter()
 async def create_promo(
     token_header: str
     | None = Header(None, alias=settings.token_settings.token_header),
-    body: PromoModel = Body(...),
+    body: PromoInput = Body(...),
     loyalty_service: LoyaltyService = Depends(
         Provide[Container.loyalty_service]
     ),
