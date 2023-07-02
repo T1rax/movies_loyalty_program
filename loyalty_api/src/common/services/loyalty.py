@@ -24,11 +24,11 @@ class LoyaltyService:
             promo_code = get_promo_code()
         except Exception:
             logger.error(
-                "Failed to generate a secret promo code", exc_info=True
+                "Failed to generate a secret promo code: data", data.dict(), exc_info=True
             )
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-                detail="Failed to create a new promo.",
+                detail="Failed to get a promo code.",
             )
         try:
             promo = await self._repository.create_promo(data, promo_code)
