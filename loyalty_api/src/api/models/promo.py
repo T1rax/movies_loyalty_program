@@ -23,3 +23,15 @@ class PromoInput(ORDJSONModelMixin):
     activation_date: datetime = Field(default_factory=datetime.now())
     user_id: str | None
     activations_limit: int = Field(default_factory=1)
+
+
+class PromoResponse(ORDJSONModelMixin):
+    campaign_name: str
+    promo_code: str
+    products: list[str]
+    type: PromoType
+    value: int
+    duration: int | None
+    activation_date: datetime
+    user_id: str | None
+    activations_limit: int
