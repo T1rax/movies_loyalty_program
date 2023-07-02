@@ -13,7 +13,9 @@ class LoyaltyRepository:
     def __init__(self, db: DbConnector):
         self._db = db
 
-    async def create_promo(self, data: PromoInput, promo_code: str):
+    async def create_promo(
+        self, data: PromoInput, promo_code: str
+    ) -> PromoResponse | None:
         try:
             row_data = await self._db.pool.fetchrow(
                 queries.CREATE_PROMO,

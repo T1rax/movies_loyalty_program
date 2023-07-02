@@ -19,12 +19,14 @@ class LoyaltyService:
     ):
         self._repository = repository
 
-    async def create_promo(self, data: PromoInput):
+    async def create_promo(self, data: PromoInput) -> dict:
         try:
             promo_code = get_promo_code()
         except Exception:
             logger.error(
-                "Failed to generate a secret promo code: data", data.dict(), exc_info=True
+                "Failed to generate a secret promo code: data",
+                data.dict(),
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
