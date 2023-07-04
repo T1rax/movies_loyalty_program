@@ -24,17 +24,17 @@ services:
       timeout: 5s
       retries: 5
 
-#  migration:
-#    build:
-#      context: ./loyalty_db
-#      dockerfile: ./Dockerfile
-#    command: bash -c "yoyo apply --database ${DATABASE_URL} ./migrations -b"
-#    env_file:
-#      - ./.env
-#    depends_on:
-#      - "db"
-#    networks:
-#      - custom
+  migration:
+    build:
+      context: ./loyalty_db
+      dockerfile: ./Dockerfile
+    command: bash -c "yoyo apply --database ${DATABASE_URL} ./migrations -b"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    networks:
+      - custom
 
   loyalty_api:
     build:
