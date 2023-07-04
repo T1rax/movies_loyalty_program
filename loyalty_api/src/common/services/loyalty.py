@@ -4,9 +4,8 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from src.api.models.promo import PromoInput
 from src.common.exceptions import DatabaseError
+from src.common.promo import get_promo_code
 from src.common.repositories.loyalty import LoyaltyRepository
-
-from loyalty_api.src.common.promo import get_promo_code
 
 
 logger = logging.getLogger(__name__)

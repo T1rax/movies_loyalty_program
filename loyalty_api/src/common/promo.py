@@ -1,11 +1,10 @@
-import string
+import base64
+import os
 
-import humanhash
 from src import settings
 
 
-SYMBOLS = string.ascii_letters + string.digits + "!#$%&-_"
-
-
 def get_promo_code() -> str:
-    return humanhash.humanize(SYMBOLS, words=settings.NUMBER_OF_WORDS)
+    code = os.urandom(settings.LENGTH_CODE)
+    promo_code = base64.b64encode(code)
+    return promo_code.decode("utf-8")

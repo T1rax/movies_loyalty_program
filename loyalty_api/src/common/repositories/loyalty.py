@@ -26,7 +26,7 @@ class LoyaltyRepository:
                 data.value,
                 data.duration,
                 data.activation_date,
-                data.user_id,
+                data.user_ids,
                 data.activations_limit,
             )
         except Exception:
@@ -38,4 +38,5 @@ class LoyaltyRepository:
                 exc_info=True,
             )
             raise DatabaseError()
+        print("---row_data", row_data)
         return PromoResponse.parse_obj(row_data) if row_data else None

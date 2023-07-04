@@ -1,0 +1,1 @@
+LOYALTY_TABLES = ("promos",)

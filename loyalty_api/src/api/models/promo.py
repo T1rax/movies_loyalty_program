@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum
 
-from pydantic import Field
 from src.api.models.base import ORDJSONModelMixin
 
 
@@ -16,22 +15,23 @@ class PromoType(str, Enum):
 
 class PromoInput(ORDJSONModelMixin):
     campaign_name: str
-    products: list[str]
+    products: set[str]
     type: PromoType
     value: int
     duration: int | None
-    activation_date: datetime = Field(default_factory=datetime.now())
-    user_id: str | None
-    activations_limit: int = Field(default_factory=1)
+    activation_date: datetime | None
+    user_ids: set[str] | None = set()
+    activations_limit: int = 1
 
 
 class PromoResponse(ORDJSONModelMixin):
+    promo_id: int
     campaign_name: str
     promo_code: str
     products: list[str]
-    type: PromoType
+    type: str
     value: int
     duration: int | None
-    activation_date: datetime
-    user_id: str | None
+    activation_date: datetime | None
+    user_ids: list
     activations_limit: int
