@@ -14,7 +14,7 @@ class LoyaltyRepository:
         self._db = db
 
     async def create_promo(
-        self, data: PromoInput, promo_code: str
+        self, data: PromoInput, promo_code: str = None
     ) -> PromoResponse | None:
         try:
             row_data = await self._db.pool.fetchrow(
@@ -38,5 +38,4 @@ class LoyaltyRepository:
                 exc_info=True,
             )
             raise DatabaseError()
-        print("---row_data", row_data)
         return PromoResponse.parse_obj(row_data) if row_data else None
