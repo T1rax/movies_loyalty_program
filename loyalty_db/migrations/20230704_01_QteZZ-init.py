@@ -11,7 +11,8 @@ steps = [
     step(
         """
         create table if not exists promos (
-            promo_code varchar(20) primary key,
+            id bigserial primary key,
+            promo_code varchar(20) not null,
             campaign_name varchar not null,
             products varchar array not null,
             type varchar(20) not null,
@@ -25,14 +26,18 @@ steps = [
             updated_dt timestamp with time zone default now()
         );
         
+        create unique index if not exists idx_promos_promo_code
+        on promos(promo_code);
+        
         create table if not exists promos_activations (
             id bigserial primary key,
-            promo_code varchar(20) not null,
+            promo_id bigserial not null,
             user_id uuid not null,
             activated_dt timestamp with time zone default now()
         );
         """,
         """
+        drop index if exists idx_promos_promo_code;
         drop table if exists promos;
         drop table if exists promos_activations;
         """
