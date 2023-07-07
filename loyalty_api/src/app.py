@@ -4,7 +4,8 @@ import uvicorn as uvicorn
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from src.api import srv
-from src.common.connectors.amqp import AMQPSenderPikaConnector
+
+# from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.common.connectors.db import DbConnector
 from src.common.exception_handlers import (
     http_exception_handler,

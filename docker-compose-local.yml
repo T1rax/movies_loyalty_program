@@ -5,10 +5,6 @@ services:
     ports:
       - "6668:5432"
 
-#  migration:
-#    environment:
-#      - DATABASE_URL=postgresql://app:123qwe@localhost:6668/loyalty
-
   loyalty_api:
     environment:
       - DATABASE_URL=postgresql://app:123qwe@db:5432/loyalty

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Loyalty program for online cinema"
 authors = ["The best developers on the yandex-practicum ever"]
 readme = "README.md"
-packages = [{include = "movies_loyalty_program"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = "~3.11"
@@ -20,6 +20,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
+
 line-length = 79
 target-version = ['py311']
 include = '\.pyi?$'
