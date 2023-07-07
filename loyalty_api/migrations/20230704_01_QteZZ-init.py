@@ -19,7 +19,7 @@ steps = [
             value smallint not null,
             duration smallint,
             activation_date timestamp with time zone default now(),
-            user_ids uuid array not null,
+            user_ids varchar array,
             activations_limit smallint not null,
             deactivated boolean default false,
             created_dt timestamp with time zone default now(),

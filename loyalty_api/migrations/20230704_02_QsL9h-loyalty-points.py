@@ -13,7 +13,7 @@ steps = [
             id bigserial primary key,
             user_id uuid not null,
             loyalty_level smallint not null,
-            creation_dt timestamp with time zone default now(),
+            created_dt timestamp with time zone default now(),
             updated_dt timestamp with time zone default now()
         );
         
