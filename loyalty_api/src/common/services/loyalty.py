@@ -29,3 +29,6 @@ class LoyaltyService:
                 detail="Failed to create a new promo.",
             )
         return promo
+
+    async def promo_activate(self, promo_code: str, user_id: str):
+        pass

@@ -35,3 +35,8 @@ class PromoResponse(ORDJSONModelMixin):
     activation_date: datetime | None
     user_ids: list[str]
     activations_limit: int
+
+
+class PromoActivateInput(ORDJSONModelMixin):
+    promo_code: str
+    user_id: str | None

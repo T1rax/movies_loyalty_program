@@ -3,7 +3,7 @@ import sys
 import uvicorn as uvicorn
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
-from src.api import srv
+from src.api import srv, v1
 
 # from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.common.connectors.db import DbConnector
@@ -40,6 +40,7 @@ def create_app() -> FastAPI:
     app.container = container
 
     app.include_router(srv.router)
+    app.include_router(v1.router)
 
     return app
 

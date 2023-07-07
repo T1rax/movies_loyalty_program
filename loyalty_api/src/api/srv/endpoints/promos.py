@@ -1,7 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from src import settings
-from src.api.models.promo import PromoInput
+from src.api.models.promo import PromoActivateInput, PromoInput
 from src.common.responses import ApiResponse, wrap_response
 from src.common.services.loyalty import LoyaltyService
 from src.containers import Container
@@ -33,3 +33,27 @@ async def create_promo(
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
     return await loyalty_service.create_promo(body)
+
+
+@router.post(
+    "/v1/promos/activate",
+    summary="",
+    description="",
+    response_model=ApiResponse,
+)
+@inject
+@wrap_response
+async def promo_activate(
+    token_header: str
+    | None = Header(None, alias=settings.token_settings.token_header),
+    body: PromoActivateInput = Body(...),
+    loyalty_service: LoyaltyService = Depends(
+        Provide[Container.loyalty_service]
+    ),
+):
+    if not token_header:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")
+    if token_header not in settings.LOYALTY_SRV_TOKENS:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
+
+    return await loyalty_service.promo_activate(body.promo_code, body.user_id)
