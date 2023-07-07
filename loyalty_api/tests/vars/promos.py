@@ -38,7 +38,7 @@ async def create_promo(
 
 
 def get_promos_response(
-    promo_id=1,
+    id=1,
     campaign_name="test",
     promo_code=None,
     products=None,
@@ -54,7 +54,7 @@ def get_promos_response(
     return {
         "success": True,
         "result": {
-            "promo_id": promo_id,
+            "id": id,
             "campaign_name": campaign_name,
             "promo_code": promo_code,
             "products": products,

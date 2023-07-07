@@ -25,7 +25,7 @@ class PromoInput(ORDJSONModelMixin):
 
 
 class PromoResponse(ORDJSONModelMixin):
-    promo_id: int
+    id: int
     campaign_name: str
     promo_code: str
     products: list[str]
@@ -33,5 +33,5 @@ class PromoResponse(ORDJSONModelMixin):
     value: int
     duration: int | None
     activation_date: datetime | None
-    user_ids: list
+    user_ids: list[str]
     activations_limit: int
