@@ -1,5 +1,5 @@
 """
-loyalty_points
+add table loyalty_cards
 """
 
 from yoyo import step

@@ -1,6 +1,6 @@
 """
 init
-promo_codes
+promos
 """
 
 from yoyo import step
