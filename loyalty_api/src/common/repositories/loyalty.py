@@ -39,3 +39,22 @@ class LoyaltyRepository:
             )
             raise DatabaseError()
         return PromoResponse.parse_obj(row_data) if row_data else None
+
+    async def get_promo_by_promo_code(
+        self, promo_code: str
+    ) -> PromoResponse | None:
+        row_data = await self._db.pool.fetchrow(
+            queries.GET_PROMO_BY_PROMO_CODE, promo_code
+        )
+        return PromoResponse.parse_obj(row_data) if row_data else None
+
+    async def get_promo_activation(self, promo_id: int, user_id: str):
+        pass
+
+    async def create_promo_activation(self, promo_id: int, user_id: str):
+        pass
+
+    async def set_activations_count(
+        self, activations_cnt: int, promo_id: int, user_id: str
+    ):
+        pass

@@ -31,4 +31,26 @@ class LoyaltyService:
         return promo
 
     async def promo_activate(self, promo_code: str, user_id: str):
-        pass
+        promo = await self._repository.get_promo_by_promo_code(promo_code)
+        if not promo:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Сouldn't find a promo with this promo_code.",
+            )
+
+        if user_id not in promo.user_ids:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Promo_code not found.",
+            )
+
+        promo_activation = self._repository.get_promo_activation(
+            promo.id, user_id
+        )
+        if promo_activation:
+            activations_cnt = promo_activation.activations_cnt + 1
+            await self._repository.set_activations_count(
+                activations_cnt, promo.id, user_id
+            )
+        else:
+            await self._repository.create_promo_activation(promo.id, user_id)
