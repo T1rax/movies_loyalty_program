@@ -31,7 +31,7 @@ steps = [
         
         create table if not exists promos_activations (
             id bigserial primary key,
-            promo_id bigserial not null,
+            promo_id bigint not null,
             user_id uuid not null,
             activated_dt timestamp with time zone default now()
         );

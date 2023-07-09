@@ -19,7 +19,7 @@ steps = [
         
         create table if not exists loyalty_transactions (
             id bigserial primary key,
-            loyalty_id bigserial not null,
+            loyalty_id bigint not null,
             user_id uuid not null,
             points smallint not null,
             source varchar,
