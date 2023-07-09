@@ -47,6 +47,16 @@ class LoyaltyService:
         promo_activation = self._repository.get_promo_activation(
             promo.id, user_id
         )
+        if (
+            promo_activation
+            and promo_activation.activations_cnt >= promo.activations_limit
+        ):
+            await self._repository.deactivated_promo(promo.id)
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail="The activation limit has been reached.",
+            )
+
         if promo_activation:
             activations_cnt = promo_activation.activations_cnt + 1
             await self._repository.set_activations_count(

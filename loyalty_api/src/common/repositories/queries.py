@@ -7,7 +7,7 @@ CREATE_PROMO = """
 GET_PROMO_BY_PROMO_CODE = """
     SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, user_ids, activations_limit, created_dt, updated_dt
     FROM promos
-    WHERE promo_code=$1;
+    WHERE promo_code=$1 and not deactivated;
 """
 
 GET_PROMO_ACTIVATION = """
@@ -24,4 +24,9 @@ CREATE_PROMO_ACTIVATION = """
 SET_ACTIVATIONS_COUNT = """
     UPDATE promos_activations SET activations_cnt = $1, updated_dt = now()
     WHERE promo_id=$2 and user_id=$3;
+"""
+
+SET_DEACTIVATED_PROMO = """
+    UPDATE promos SET deactivated = TRUE, updated_dt = now()
+    WHERE id=$1;
 """

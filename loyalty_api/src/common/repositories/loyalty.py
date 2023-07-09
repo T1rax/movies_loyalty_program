@@ -58,3 +58,6 @@ class LoyaltyRepository:
         self, activations_cnt: int, promo_id: int, user_id: str
     ):
         pass
+
+    async def deactivated_promo(self, promo_id: int, user_id: str):
+        pass
