@@ -38,10 +38,10 @@ class LoyaltyService:
                 detail="Сouldn't find a promo with this promo_code.",
             )
 
-        if user_id not in promo.user_ids:
+        if promo.user_ids and user_id not in promo.user_ids:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail="Promo_code not found.",
+                detail="Promo_code for user_id not found.",
             )
 
         promo_activation = self._repository.get_promo_activation(
