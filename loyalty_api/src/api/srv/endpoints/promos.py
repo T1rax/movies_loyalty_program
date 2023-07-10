@@ -37,8 +37,8 @@ async def create_promo(
 
 @router.post(
     "/v1/promos/activate",
-    summary="",
-    description="",
+    summary="Применить промокод.",
+    description="Ручка для применения/использования прококода.",
     response_model=ApiResponse,
 )
 @inject

@@ -48,9 +48,15 @@ def get_promos_response(
     activation_date=None,
     user_ids=None,
     activations_limit=1,
+    created_dt=None,
+    updated_dt=None,
 ):
     if activation_date:
         activation_date = activation_date.isoformat()
+    if created_dt:
+        created_dt = created_dt.isoformat()
+    if updated_dt:
+        updated_dt = updated_dt.isoformat()
     return {
         "success": True,
         "result": {
@@ -64,6 +70,8 @@ def get_promos_response(
             "activation_date": activation_date,
             "user_ids": user_ids,
             "activations_limit": activations_limit,
+            "created_dt": created_dt,
+            "updated_dt": updated_dt,
         },
         "errors": None,
     }

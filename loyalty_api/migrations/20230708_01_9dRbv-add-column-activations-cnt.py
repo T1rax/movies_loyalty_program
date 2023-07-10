@@ -11,7 +11,7 @@ steps = [
         """
         set lock_timeout to '5s';
         ALTER TABLE promos_activations
-        ADD COLUMN activations_cnt smallint NULL
+        ADD COLUMN activations_cnt smallint NOT NULL DEFAULT 0
         """,
         """
         set lock_timeout to '5s';

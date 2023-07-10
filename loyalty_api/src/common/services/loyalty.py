@@ -44,7 +44,7 @@ class LoyaltyService:
                 detail="Promo_code for user_id not found.",
             )
 
-        promo_activation = self._repository.get_promo_activation(
+        promo_activation = await self._repository.get_promo_activation(
             promo.id, user_id
         )
         if (
@@ -63,4 +63,9 @@ class LoyaltyService:
                 activations_cnt, promo.id, user_id
             )
         else:
-            await self._repository.create_promo_activation(promo.id, user_id)
+            activations_cnt = 1
+            await self._repository.create_promo_activation(
+                promo.id, user_id, activations_cnt
+            )
+
+        return "Ok"

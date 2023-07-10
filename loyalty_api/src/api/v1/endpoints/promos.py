@@ -14,8 +14,8 @@ router = APIRouter()
 
 @router.post(
     "/promos/activate",
-    summary="",
-    description="",
+    summary="Применить промокод.",
+    description="Ручка для применения/использования прококода.",
     response_model=ApiResponse,
 )
 @inject
