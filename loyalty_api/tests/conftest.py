@@ -9,7 +9,6 @@ from httpx import AsyncClient
 from src.app import create_app
 from src.common.connectors.db import register_json
 
-
 DATABASE_URL = "postgresql://app:123qwe@localhost:6668/loyalty"
 
 

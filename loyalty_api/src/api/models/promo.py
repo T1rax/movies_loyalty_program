@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from uuid import UUID
 
 from src.api.models.base import ORDJSONModelMixin
 
@@ -47,7 +48,7 @@ class PromoActivateInput(ORDJSONModelMixin):
 class PromoActivateResponse(ORDJSONModelMixin):
     id: int
     promo_id: int
-    user_id: str
+    user_id: UUID
     activations_cnt: int
     created_dt: datetime | None
     updated_dt: datetime | None

@@ -18,7 +18,7 @@ GET_PROMO_ACTIVATION = """
 
 CREATE_PROMO_ACTIVATION = """
     INSERT INTO promos_activations (promo_id, user_id, activations_cnt)
-    VALUES ($1, $2, $3) RETURNING id;
+    VALUES ($1, $2, $3) RETURNING *;
 """
 
 SET_ACTIVATIONS_COUNT = """
