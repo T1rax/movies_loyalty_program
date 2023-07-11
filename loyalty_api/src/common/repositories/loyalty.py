@@ -61,17 +61,17 @@ class LoyaltyRepository:
         return PromoActivateResponse.parse_obj(row_data) if row_data else None
 
     async def create_promo_activation(
-        self, promo_id: int, user_id: str, activations_cnt: int
+        self, promo_id: int, user_id: str
     ):
         return await self._db.pool.execute(
-            queries.CREATE_PROMO_ACTIVATION, promo_id, user_id, activations_cnt
+            queries.CREATE_PROMO_ACTIVATION, promo_id, user_id
         )
 
-    async def set_activations_count(
-        self, activations_cnt: int, promo_id: int, user_id: str
+    async def get_promo_activation_cnt(
+        self, promo_id: int
     ):
         return await self._db.pool.execute(
-            queries.SET_ACTIVATIONS_COUNT, activations_cnt, promo_id, user_id
+            queries.GET_ACTIVATIONS_COUNT, promo_id
         )
 
     async def deactivated_promo(self, promo_id: int):

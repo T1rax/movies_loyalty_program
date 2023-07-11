@@ -38,34 +38,27 @@ class LoyaltyService:
                 detail="Сouldn't find a promo with this promo_code.",
             )
 
-        if promo.user_ids and user_id not in promo.user_ids:
-            raise HTTPException(
-                status_code=HTTPStatus.NOT_FOUND,
-                detail="Promo_code for user_id not found.",
-            )
-
-        promo_activation = await self._repository.get_promo_activation(
-            promo.id, user_id
+        promo_activation_cnt = await self._repository.get_promo_activation_cnt(
+            promo.id
         )
-        if (
-            promo_activation
-            and promo_activation.activations_cnt >= promo.activations_limit
-        ):
+        if promo_activation_cnt >= promo.activations_limit:
             await self._repository.deactivated_promo(promo.id)
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail="The activation limit has been reached.",
             )
 
-        if promo_activation:
-            activations_cnt = promo_activation.activations_cnt + 1
-            await self._repository.set_activations_count(
-                activations_cnt, promo.id, user_id
+        user_promo_activation = await self._repository.get_promo_activation(
+            promo.id, user_id
+        )
+        if user_promo_activation:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail="The user has already activated the promo.",
             )
         else:
-            activations_cnt = 1
             await self._repository.create_promo_activation(
-                promo.id, user_id, activations_cnt
+                promo.id, user_id
             )
 
         return "Ok"

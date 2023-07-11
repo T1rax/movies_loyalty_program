@@ -17,13 +17,16 @@ GET_PROMO_ACTIVATION = """
 """
 
 CREATE_PROMO_ACTIVATION = """
-    INSERT INTO promos_activations (promo_id, user_id, activations_cnt)
-    VALUES ($1, $2, $3) RETURNING *;
+    INSERT INTO promos_activations (promo_id, user_id)
+    VALUES ($1, $2)
+    ON CONFLICT (promo_id, user_id) 
+    DO UPDATE SET promo_id=$1, user_id=$2, updated_dt = now();
 """
 
-SET_ACTIVATIONS_COUNT = """
-    UPDATE promos_activations SET activations_cnt = $1, updated_dt = now()
-    WHERE promo_id=$2 and user_id=$3;
+GET_ACTIVATIONS_COUNT = """
+    SELECT COUNT(promo_id)
+    FROM promos_activations
+    WHERE promo_id=$1;
 """
 
 SET_DEACTIVATED_PROMO = """

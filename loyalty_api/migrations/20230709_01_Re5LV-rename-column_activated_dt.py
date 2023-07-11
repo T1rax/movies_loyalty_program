@@ -4,7 +4,7 @@ rename column activated_dt
 
 from yoyo import step
 
-__depends__ = {'20230708_01_9dRbv-add-column-activations-cnt'}
+__depends__ = {'20230704_02_QsL9h-loyalty-points'}
 
 steps = [
     step(
