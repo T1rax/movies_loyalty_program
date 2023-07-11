@@ -10,7 +10,7 @@ steps = [
     step(
         """
         create table if not exists loyalty_cards (
-            id bigserial primary key,
+            id uuid primary key,
             user_id uuid not null,
             loyalty_level smallint not null,
             created_dt timestamp with time zone default now(),
@@ -18,7 +18,7 @@ steps = [
         );
         
         create table if not exists loyalty_transactions (
-            id bigserial primary key,
+            id uuid primary key,
             loyalty_id bigint not null,
             user_id uuid not null,
             points smallint not null,

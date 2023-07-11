@@ -30,7 +30,7 @@ steps = [
         on promos(promo_code);
         
         create table if not exists promos_activations (
-            id bigserial primary key,
+            id uuid primary key,
             promo_id bigint not null,
             user_id uuid not null,
             activated_dt timestamp with time zone default now()
