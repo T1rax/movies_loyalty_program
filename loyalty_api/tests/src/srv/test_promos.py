@@ -57,7 +57,7 @@ async def test_create_promo_ok(
         type=type,
         value=value,
         duration=duration,
-        user_ids=user_ids,
+        # user_ids=user_ids,
         promo_code=promo_code,
     )
     test_client.headers[settings.token_settings.token_header] = "test"

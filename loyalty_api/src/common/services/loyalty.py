@@ -28,6 +28,16 @@ class LoyaltyService:
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail="Failed to create a new promo.",
             )
+        if data.user_ids:
+            try:
+                await self._repository.create_user_promos(
+                    data.user_ids, promo.id
+                )
+            except DatabaseError:
+                raise HTTPException(
+                    status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+                    detail="Failed to create user promos.",
+                )
         return promo
 
     async def promo_activate(self, promo_code: str, user_id: str):
@@ -57,8 +67,6 @@ class LoyaltyService:
                 detail="The user has already activated the promo.",
             )
         else:
-            await self._repository.create_promo_activation(
-                promo.id, user_id
-            )
+            await self._repository.create_promo_activation(promo.id, user_id)
 
         return "Ok"

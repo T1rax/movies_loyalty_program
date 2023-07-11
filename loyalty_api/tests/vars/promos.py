@@ -1,6 +1,10 @@
 from collections import OrderedDict
 
-from src.api.models.promo import PromoResponse, PromoType, PromoActivateResponse
+from src.api.models.promo import (
+    PromoActivateResponse,
+    PromoResponse,
+    PromoType,
+)
 from src.common.repositories import queries
 
 
@@ -20,7 +24,7 @@ async def create_promo(
     value=10,
     duration=None,
     activation_date=None,
-    user_ids=None,
+    # user_ids=None,
     activations_limit=1,
     promo_code=None,
 ):
@@ -34,7 +38,7 @@ async def create_promo(
         value=value,
         duration=duration,
         activation_date=activation_date,
-        user_ids=user_ids,
+        # user_ids=user_ids,
         activations_limit=activations_limit,
     )
     row_data = await _insert_promo(pool, test_data)
@@ -51,7 +55,7 @@ def get_promos_response(
     value=None,
     duration=None,
     activation_date=None,
-    user_ids=None,
+    # user_ids=None,
     activations_limit=1,
     created_dt=None,
     updated_dt=None,
@@ -73,7 +77,7 @@ def get_promos_response(
             "value": value,
             "duration": duration,
             "activation_date": activation_date,
-            "user_ids": user_ids,
+            # "user_ids": user_ids,
             "activations_limit": activations_limit,
             "created_dt": created_dt,
             "updated_dt": updated_dt,
@@ -83,7 +87,9 @@ def get_promos_response(
 
 
 async def _insert_promo_activation(pool, test_data: dict):
-    row_data = await pool.fetchrow(queries.CREATE_PROMO_ACTIVATION, *test_data.values())
+    row_data = await pool.fetchrow(
+        queries.CREATE_PROMO_ACTIVATION, *test_data.values()
+    )
     return row_data
 
 

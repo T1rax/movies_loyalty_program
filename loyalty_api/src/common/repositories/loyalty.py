@@ -30,7 +30,6 @@ class LoyaltyRepository:
                 data.value,
                 data.duration,
                 data.activation_date,
-                data.user_ids,
                 data.activations_limit,
             )
         except Exception:
@@ -43,6 +42,21 @@ class LoyaltyRepository:
             )
             raise DatabaseError()
         return PromoResponse.parse_obj(row_data) if row_data else None
+
+    async def create_user_promos(self, user_ids: set, promo_id: int):
+        values = tuple((promo_id, user_id) for user_id in user_ids)
+        try:
+            return await self._db.pool.executemany(
+                queries.CREATE_USER_PROMOS, values
+            )
+        except Exception:
+            logger.exception(
+                "Failed to create user promos: user_ids %s promo_id %s",
+                user_ids,
+                promo_id,
+                exc_info=True,
+            )
+            raise DatabaseError()
 
     async def get_promo_by_promo_code(
         self, promo_code: str
@@ -60,16 +74,12 @@ class LoyaltyRepository:
         )
         return PromoActivateResponse.parse_obj(row_data) if row_data else None
 
-    async def create_promo_activation(
-        self, promo_id: int, user_id: str
-    ):
+    async def create_promo_activation(self, promo_id: int, user_id: str):
         return await self._db.pool.execute(
             queries.CREATE_PROMO_ACTIVATION, promo_id, user_id
         )
 
-    async def get_promo_activation_cnt(
-        self, promo_id: int
-    ):
+    async def get_promo_activation_cnt(self, promo_id: int):
         return await self._db.pool.execute(
             queries.GET_ACTIVATIONS_COUNT, promo_id
         )

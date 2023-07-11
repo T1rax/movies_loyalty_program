@@ -30,7 +30,7 @@ steps = [
         on promos(promo_code);
         
         create table if not exists promos_activations (
-            id uuid primary key,
+            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
             promo_id bigint not null,
             user_id uuid not null,
             activated_dt timestamp with time zone default now()

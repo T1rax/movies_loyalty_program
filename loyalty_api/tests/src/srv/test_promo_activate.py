@@ -5,7 +5,7 @@ import pytest
 from src import settings
 from src.common.promo import get_promo_code
 from src.common.repositories.loyalty import LoyaltyRepository
-from tests.vars.promos import create_promo, create_promo_activation
+from tests.vars.promos import create_promo
 
 from loyalty_api.tests.vars.tables import LOYALTY_TABLES
 
@@ -20,7 +20,7 @@ async def test_promo_activate_ok(pool, test_client, test_app):
     promo = await create_promo(
         pool,
         campaign_name="test_campaign",
-        user_ids=[user_id],
+        # user_ids=[user_id],
         promo_code=promo_code,
     )
     # promo_activation = await create_promo_activation(pool, promo_id=promo.id, user_id=user_id)
@@ -28,9 +28,12 @@ async def test_promo_activate_ok(pool, test_client, test_app):
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
     loyalty_repository_mock.get_promo_by_promo_code.return_value = promo
+    loyalty_repository_mock.get_promo_activation_cnt.return_value = 0
     loyalty_repository_mock.get_promo_activation.return_value = None
 
-    with test_app.container.loyalty_repository.override(loyalty_repository_mock):
+    with test_app.container.loyalty_repository.override(
+        loyalty_repository_mock
+    ):
         response = await test_client.post(
             "/api/srv/v1/promos/activate", json=body
         )
