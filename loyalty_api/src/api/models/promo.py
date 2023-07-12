@@ -42,7 +42,10 @@ class PromoResponse(ORDJSONModelMixin):
 
 class PromoActivateInput(ORDJSONModelMixin):
     promo_code: str
-    user_id: str | None
+
+
+class PromoActivateInputSrv(PromoActivateInput):
+    user_id: str
 
 
 class PromoActivateResponse(ORDJSONModelMixin):
