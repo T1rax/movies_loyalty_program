@@ -5,7 +5,7 @@ CREATE_PROMO = """
 """
 
 GET_PROMO_BY_PROMO_CODE = """
-    SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, activations_limit, created_dt, updated_dt
+    SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, activations_limit, linked_to_user, created_dt, updated_dt
     FROM promos
     WHERE promo_code=$1 and not deactivated;
 """
@@ -37,4 +37,15 @@ CREATE_USER_PROMOS = """
     VALUES ($1, $2)
     ON CONFLICT (promo_id, user_id)
     DO UPDATE SET promo_id=$1, user_id=$2, updated_dt = now();
+"""
+
+GET_USER_PROMO = """
+    SELECT id, promo_id, user_id, created_dt, updated_dt
+    FROM promos_activations
+    WHERE promo_id=$1 and user_id=$2;
+"""
+
+SET_FLAG_LINKED_TO_USER = """
+    UPDATE promos SET linked_to_user = TRUE, updated_dt = now()
+    WHERE id=$1;
 """

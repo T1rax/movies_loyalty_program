@@ -8,7 +8,11 @@ from src.api.models.promo import PromoType
 from src.common.exceptions import DatabaseError
 from src.common.promo import get_promo_code
 from src.common.repositories.loyalty import LoyaltyRepository
-from tests.vars.promos import create_promo, get_promos_response
+from tests.vars.promos import (
+    create_promo,
+    get_promo_by_id,
+    get_promos_response,
+)
 
 from loyalty_api.tests.vars.tables import LOYALTY_TABLES
 
@@ -57,7 +61,6 @@ async def test_create_promo_ok(
         type=type,
         value=value,
         duration=duration,
-        # user_ids=user_ids,
         promo_code=promo_code,
     )
     test_client.headers[settings.token_settings.token_header] = "test"
@@ -66,8 +69,10 @@ async def test_create_promo_ok(
     with test_app.container.loyalty_service.override(loyalty_service_mock):
         response = await test_client.post("/api/srv/v1/promos", json=body)
 
+    new_promo = await get_promo_by_id(pool, promo.id)
+
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == get_promos_response(**promo.dict())
+    assert response.json() == get_promos_response(**new_promo.dict())
 
 
 @pytest.mark.parametrize(

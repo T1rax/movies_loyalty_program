@@ -16,6 +16,31 @@ async def _insert_promo(pool, test_data: dict):
     return row_data
 
 
+async def _insert_user_promos(pool, user_ids: set, promo_id: int):
+    values = tuple((promo_id, user_id) for user_id in user_ids)
+    row_data = await pool.executemany(queries.CREATE_USER_PROMOS, values)
+    return row_data
+
+
+async def _insert_promo_activation(pool, test_data: dict):
+    row_data = await pool.fetchrow(
+        queries.CREATE_PROMO_ACTIVATION, *test_data.values()
+    )
+    return row_data
+
+
+async def get_promo_by_id(pool, promo_id: int):
+    row_data = await pool.fetchrow(
+        """
+        SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, activations_limit, linked_to_user, created_dt, updated_dt
+        FROM promos
+        WHERE id=$1;
+        """,
+        promo_id,
+    )
+    return PromoResponse.parse_obj(row_data) if row_data else None
+
+
 async def create_promo(
     pool,
     campaign_name="test",
@@ -24,7 +49,7 @@ async def create_promo(
     value=10,
     duration=None,
     activation_date=None,
-    # user_ids=None,
+    user_ids=None,
     activations_limit=1,
     promo_code=None,
 ):
@@ -38,10 +63,13 @@ async def create_promo(
         value=value,
         duration=duration,
         activation_date=activation_date,
-        # user_ids=user_ids,
         activations_limit=activations_limit,
     )
     row_data = await _insert_promo(pool, test_data)
+
+    if user_ids:
+        await _insert_user_promos(pool, user_ids, row_data.id)
+        await pool.execute(queries.SET_FLAG_LINKED_TO_USER, row_data.id)
 
     return PromoResponse.parse_obj(row_data) if row_data else None
 
@@ -55,10 +83,10 @@ def get_promos_response(
     value=None,
     duration=None,
     activation_date=None,
-    # user_ids=None,
     activations_limit=1,
     created_dt=None,
     updated_dt=None,
+    linked_to_user=False,
 ):
     if activation_date:
         activation_date = activation_date.isoformat()
@@ -77,20 +105,13 @@ def get_promos_response(
             "value": value,
             "duration": duration,
             "activation_date": activation_date,
-            # "user_ids": user_ids,
             "activations_limit": activations_limit,
             "created_dt": created_dt,
             "updated_dt": updated_dt,
+            "linked_to_user": linked_to_user,
         },
         "errors": None,
     }
-
-
-async def _insert_promo_activation(pool, test_data: dict):
-    row_data = await pool.fetchrow(
-        queries.CREATE_PROMO_ACTIVATION, *test_data.values()
-    )
-    return row_data
 
 
 async def create_promo_activation(
@@ -105,6 +126,5 @@ async def create_promo_activation(
         activations_cnt=activations_cnt,
     )
     row_data = await _insert_promo_activation(pool, test_data)
-    print("--DAT", row_data)
 
     return PromoActivateResponse.parse_obj(row_data) if row_data else None

@@ -1,5 +1,6 @@
 import logging
 
+from asyncpg import Record
 from src.api.models.promo import (
     PromoActivateResponse,
     PromoInput,
@@ -87,4 +88,15 @@ class LoyaltyRepository:
     async def deactivated_promo(self, promo_id: int):
         return await self._db.pool.execute(
             queries.SET_DEACTIVATED_PROMO, promo_id
+        )
+
+    async def get_user_promo(self, user_id: str, promo_id: int) -> Record:
+        row_data = await self._db.pool.fetchrow(
+            queries.GET_USER_PROMO, promo_id, user_id
+        )
+        return row_data
+
+    async def set_flag_linked_to_user(self, promo_id: int):
+        return await self._db.pool.execute(
+            queries.SET_FLAG_LINKED_TO_USER, promo_id
         )

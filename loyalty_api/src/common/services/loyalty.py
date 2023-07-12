@@ -28,11 +28,13 @@ class LoyaltyService:
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail="Failed to create a new promo.",
             )
+
         if data.user_ids:
             try:
                 await self._repository.create_user_promos(
                     data.user_ids, promo.id
                 )
+                await self._repository.set_flag_linked_to_user(promo.id)
             except DatabaseError:
                 raise HTTPException(
                     status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
@@ -47,6 +49,16 @@ class LoyaltyService:
                 status_code=HTTPStatus.NOT_FOUND,
                 detail="Сouldn't find a promo with this promo_code.",
             )
+
+        if promo.linked_to_user:
+            user_promo = await self._repository.get_user_promo(
+                user_id, promo.id
+            )
+            if not user_promo:
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail="the promo code for the user was not found.",
+                )
 
         promo_activation_cnt = await self._repository.get_promo_activation_cnt(
             promo.id
