@@ -49,7 +49,7 @@ class PromoActivateInputSrv(PromoActivateInput):
 
 
 class PromoActivateResponse(ORDJSONModelMixin):
-    id: int
+    id: UUID
     promo_id: int
     user_id: UUID
     created_dt: datetime | None
