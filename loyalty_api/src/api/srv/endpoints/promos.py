@@ -1,7 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from src import settings
-from src.api.models.promo import PromoInput, PromoActivateInputSrv
+from src.api.models.promo import PromoActivateInputSrv, PromoInput
 from src.common.responses import ApiResponse, wrap_response
 from src.common.services.loyalty import LoyaltyService
 from src.containers import Container

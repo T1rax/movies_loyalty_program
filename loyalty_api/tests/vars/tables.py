@@ -3,4 +3,5 @@ LOYALTY_TABLES = (
     "promos_activations",
     "loyalty_cards",
     "loyalty_transactions",
+    "user_promos",
 )

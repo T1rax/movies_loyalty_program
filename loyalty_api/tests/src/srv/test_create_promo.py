@@ -6,7 +6,6 @@ import pytest
 from src import settings
 from src.api.models.promo import PromoType
 from src.common.exceptions import DatabaseError
-from src.common.promo import get_promo_code
 from src.common.repositories.loyalty import LoyaltyRepository
 from tests.vars.promos import (
     create_promo,
@@ -41,7 +40,7 @@ async def test_create_promo_ok(
     products = ["subscription_1", "subscription_2"]
     type = PromoType.DISCOUNT.value
     value = 10
-    promo_code = get_promo_code()
+    promo_code = "7J2ep6M="
     body = {
         "campaign_name": campaign_name,
         "products": products,

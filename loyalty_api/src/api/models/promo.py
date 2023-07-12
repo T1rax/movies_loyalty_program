@@ -32,12 +32,12 @@ class PromoResponse(ORDJSONModelMixin):
     products: list[str]
     type: str
     value: int
+    linked_to_user: bool
     duration: int | None
     activation_date: datetime | None
     activations_limit: int | None
     created_dt: datetime | None
     updated_dt: datetime | None
-    linked_to_user: bool
 
 
 class PromoActivateInput(ORDJSONModelMixin):
@@ -52,6 +52,5 @@ class PromoActivateResponse(ORDJSONModelMixin):
     id: int
     promo_id: int
     user_id: UUID
-    activations_cnt: int
     created_dt: datetime | None
     updated_dt: datetime | None
