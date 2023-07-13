@@ -19,7 +19,7 @@ steps = [
         
         create table if not exists loyalty_transactions (
             id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-            loyalty_id bigint not null,
+            loyalty_id uuid not null,
             user_id uuid not null,
             points smallint not null,
             source varchar,
