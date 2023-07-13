@@ -1,0 +1,76 @@
+@startuml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.4.0
+!includeurl ICONURL/common.puml
+!include <C4/C4_Container>
+!include <C4/C4_Context>
+!include <cloudinsight/rabbitmq>
+!include <office/users/users.puml>
+!include <elastic/common>
+!include <elastic/elasticsearch/elasticsearch>
+!include DEVICONS/postgresql.puml
+!include DEVICONS/python.puml
+!include DEVICONS/webplatform.puml
+!include DEVICONS/django.puml
+!includeurl ICONURL/material/email.puml
+skinparam backgroundColor MOTIVATION
+
+title [C1]: TO BE
+
+HIDE_STEREOTYPE()
+SHOW_PERSON_OUTLINE()
+
+AddElementTag("etl", $fontColor=$ELEMENT_FONT_COLOR, $bgColor="#335DA5", $shape=EightSidedShape())
+AddElementTag("new_service", $bgColor="Cyan", $fontColor="black")
+
+Person(User, "Пользователи", $sprite="users")
+Person(Admin, "Администратор", "Заносит контент в админку")
+Person(Marketer, "Маркетолог", "Отправляет коммуникации, создаёт промокоды, начисляет бонусы")
+
+System_Boundary(wb, "Web") {
+    Container(web_app, "Web Client", $sprite="webplatform")
+}
+System_Boundary(loyalty_program, "Loyalty Program Service") {
+    Container(loyalty_program_controller, "Loyalty Program Controller", $tags="etl", $sprite="python", $tags="new_service")
+    Container(loyalty_program_admin_panel, "Loyalty Program Admin Panel", "Админ панель программы лояльности", $tags="new_service")
+    Container(loyalty_program_api, "Loyalty Program API", $tags="new_service")
+}
+System_Boundary(notifications, "Notifications Service") {
+    Container(notifications_controller, "Notifications Controller", $tags="etl", $sprite="python")
+    Container(notifications_api, "Notifications API")
+    Container(notifications_admin_panel, "Notifications Admin Panel", "Админ панель для регистрации и отправки коммуникаций")
+}
+Container(admin_service, "Admin Panel", "Создание/редактирование контента", $sprite="django")
+Container(auth_service, "Auth Service", "Сервис аутентификации")
+Container(async_api_service, "Async API", "Сервис для получения информации по контенту")
+Container(etl_service, "ETL Service", "Переносит данные из БД в Еластик", $tags="etl", $sprite="python")
+ContainerDb(db, "DataBase", "Хранилище контента", $tags="db", $sprite="postgresql")
+ContainerDb(rabbitmq, "RabbitMQ", "Брокер сообщений", $sprite="rabbitmq")
+ELASTICSEARCH(elastic, "Elasticsearch",database)
+Container(ugc_service, "UGC Service", "Сервис для отслеживания активности пользователя")
+Container(email_provider, "Email provider", "Внешний сервис по отправке имейлов", $sprite="email")
+
+[Marketer] --> [notifications_admin_panel]
+[Marketer] --> [loyalty_program_admin_panel]
+[async_api_service] --> [elastic]
+[Admin] --> [admin_service]
+[admin_service] <--> [db]
+[db] <-- [etl_service]
+[etl_service] --> [elastic]
+[rabbitmq] <--> [loyalty_program_controller]
+[rabbitmq] <--> [notifications_controller]
+
+Rel(User, web_app, "Uses", "HTTPS")
+Rel(web_app, auth_service, "Аутентификация", "HTTPS")
+Rel(web_app, async_api_service, "Запрос контента", "HTTPS")
+Rel(web_app, ugc_service, "Сохранение/просмотр активности", "HTTPS")
+Rel(notifications_admin_panel, notifications_api, "Создание шаблонов и разовые отправки", "HTTPS")
+Rel(loyalty_program_admin_panel, loyalty_program_api, "Начисление/списание бонусов, создание/редактирование промокодов", "HTTPS")
+Rel(auth_service, notifications_api, "Отправка сообщения после регистрации", "HTTPS")
+Rel(ugc_service, notifications_api, "Отправка сообщения по UGC действиям", "HTTPS")
+Rel(notifications_controller, email_provider, "Данные для отправки", "HTTPS")
+Rel(loyalty_program_controller, loyalty_program_api, "Данные для отправки", "HTTPS")
+Rel(notifications_controller, notifications_api, "Данные для отправки", "HTTPS")
+
+@enduml
