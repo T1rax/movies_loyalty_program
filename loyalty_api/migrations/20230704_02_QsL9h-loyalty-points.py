@@ -1,5 +1,5 @@
 """
-loyalty_points
+add table loyalty_cards
 """
 
 from yoyo import step
@@ -10,7 +10,7 @@ steps = [
     step(
         """
         create table if not exists loyalty_cards (
-            id bigserial primary key,
+            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
             user_id uuid not null,
             loyalty_level smallint not null,
             created_dt timestamp with time zone default now(),
@@ -18,8 +18,8 @@ steps = [
         );
         
         create table if not exists loyalty_transactions (
-            id bigserial primary key,
-            loyalty_id bigserial not null,
+            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+            loyalty_id uuid not null,
             user_id uuid not null,
             points smallint not null,
             source varchar,

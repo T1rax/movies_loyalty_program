@@ -6,7 +6,7 @@ from src.common.services.loyalty import LoyaltyService
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        modules=["src.api.srv.endpoints.promos"]
+        modules=["src.api.srv.endpoints.promos", "src.api.v1.endpoints.promos"]
     )
 
     db_client = providers.Factory(db.DbConnector)

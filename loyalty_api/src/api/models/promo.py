@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from uuid import UUID
 
 from src.api.models.base import ORDJSONModelMixin
 
@@ -31,7 +32,25 @@ class PromoResponse(ORDJSONModelMixin):
     products: list[str]
     type: str
     value: int
+    linked_to_user: bool
     duration: int | None
     activation_date: datetime | None
-    user_ids: list[str]
-    activations_limit: int
+    activations_limit: int | None
+    created_dt: datetime | None
+    updated_dt: datetime | None
+
+
+class PromoActivateInput(ORDJSONModelMixin):
+    promo_code: str
+
+
+class PromoActivateInputSrv(PromoActivateInput):
+    user_id: str
+
+
+class PromoActivateResponse(ORDJSONModelMixin):
+    id: UUID
+    promo_id: int
+    user_id: UUID
+    created_dt: datetime | None
+    updated_dt: datetime | None
