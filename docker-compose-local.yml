@@ -11,6 +11,10 @@ services:
     ports:
       - "8006:8006"
 
+  redis:
+    ports:
+      - "8040:6379"
+
 #  rabbitmq:
 #    ports:
 #      - "8020:15672"

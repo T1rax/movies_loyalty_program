@@ -5,10 +5,12 @@ from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from src.api import srv, v1
 from src.common.connectors.db import DbConnector
+from src.common.connectors.redis import RedisConnector
 from src.common.exception_handlers import (
     http_exception_handler,
     request_validation_exception_handler,
 )
+from src.common.ratelimiter import RateLimiter
 from src.containers import Container
 from src.settings import logger, settings
 
@@ -20,9 +22,13 @@ def create_app() -> FastAPI:
     app = FastAPI(
         on_startup=[
             DbConnector.connect,
+            RedisConnector.init_client,
+            RateLimiter.init_ratelimiter,
         ],
         on_shutdown=[
             DbConnector.disconnect,
+            RedisConnector.close_client,
+            RateLimiter.close_ratelimiter,
         ],
         exception_handlers={
             HTTPException: http_exception_handler,
