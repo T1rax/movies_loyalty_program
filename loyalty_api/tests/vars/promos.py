@@ -37,7 +37,7 @@ async def _insert_promo_activation(pool, test_data: dict):
 async def get_promo_by_id(pool, promo_id: int):
     row_data = await pool.fetchrow(
         """
-        SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, activations_limit, linked_to_user, created_dt, updated_dt
+        SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, activations_limit, linked_to_user, deactivated, created_dt, updated_dt
         FROM promos
         WHERE id=$1;
         """,
@@ -89,6 +89,7 @@ def get_promos_response(
     duration=None,
     activation_date=None,
     activations_limit=1,
+    deactivated=False,
     created_dt=None,
     updated_dt=None,
     linked_to_user=False,
@@ -111,6 +112,7 @@ def get_promos_response(
             "duration": duration,
             "activation_date": activation_date,
             "activations_limit": activations_limit,
+            "deactivated": deactivated,
             "created_dt": created_dt,
             "updated_dt": updated_dt,
             "linked_to_user": linked_to_user,

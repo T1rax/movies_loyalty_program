@@ -33,6 +33,7 @@ class PromoResponse(ORDJSONModelMixin):
     type: str
     value: int
     linked_to_user: bool
+    deactivated: bool
     duration: int | None
     activation_date: datetime | None
     activations_limit: int | None
@@ -54,3 +55,11 @@ class PromoActivateResponse(ORDJSONModelMixin):
     user_id: UUID
     created_dt: datetime | None
     updated_dt: datetime | None
+
+
+class PromoRestoreInput(ORDJSONModelMixin):
+    promo_code: str
+
+
+class PromoRestoreInputSrv(PromoRestoreInput):
+    user_id: str
