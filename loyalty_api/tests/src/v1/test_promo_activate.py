@@ -2,7 +2,6 @@ from http import HTTPStatus
 from unittest import mock
 
 import pytest
-from src import settings
 from src.common.repositories.loyalty import LoyaltyRepository
 from tests.vars.auth import TEST_PUBLIC_KEY, sign_jwt
 from tests.vars.promos import (
@@ -49,7 +48,6 @@ async def test_promo_activate_ok(
         promo_id=promo.id,
         user_id=user_id,
     )
-    test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
     loyalty_repository_mock.get_promo_by_promo_code.return_value = promo
@@ -98,7 +96,6 @@ async def test_promo_code_for_user_not_found(
         promo_code=promo_code,
     )
     new_promo = await get_promo_by_id(pool, promo.id)
-    test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
     loyalty_repository_mock.get_promo_by_promo_code.return_value = new_promo
@@ -138,8 +135,6 @@ async def test_activation_limit_has_been_reached(
         promo_code=promo_code,
         activations_limit=activations_limit,
     )
-
-    test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
     loyalty_repository_mock.get_promo_by_promo_code.return_value = promo
@@ -187,8 +182,6 @@ async def test_user_has_already_activated_promo(
         promo_id=promo.id,
         user_id=user_id,
     )
-
-    test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
     loyalty_repository_mock.get_promo_by_promo_code.return_value = promo
