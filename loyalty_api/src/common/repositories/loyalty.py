@@ -80,14 +80,14 @@ class LoyaltyRepository:
             queries.CREATE_PROMO_ACTIVATION, promo_id, user_id
         )
 
-    async def get_promo_activation_cnt(self, promo_id: int):
-        return await self._db.pool.execute(
+    async def get_promo_activation_cnt(self, promo_id: int) -> int:
+        return await self._db.pool.fetchval(
             queries.GET_ACTIVATIONS_COUNT, promo_id
         )
 
-    async def deactivated_promo(self, promo_id: int):
+    async def set_flag_deactivated_promo(self, promo_id: int, flag: bool):
         return await self._db.pool.execute(
-            queries.SET_DEACTIVATED_PROMO, promo_id
+            queries.SET_FLAG_DEACTIVATED_PROMO, promo_id, flag
         )
 
     async def get_user_promo(self, user_id: str, promo_id: int) -> Record:
@@ -99,4 +99,9 @@ class LoyaltyRepository:
     async def set_flag_linked_to_user(self, promo_id: int):
         return await self._db.pool.execute(
             queries.SET_FLAG_LINKED_TO_USER, promo_id
+        )
+
+    async def delete_user_promo_activation(self, promo_id: int, user_id: str):
+        return await self._db.pool.execute(
+            queries.DELETE_USER_PROMO_ACTIVATION, promo_id, user_id
         )
