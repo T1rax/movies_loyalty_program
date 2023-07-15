@@ -36,12 +36,12 @@ System_Boundary(another_services, "Внешние сервисы") {
 }
 
 [Marketer] --> [loyalty_program_admin_panel]
-[scoring_worker] --> [loyalty_program_api]
-[scoring_post_purchase_worker] --> [loyalty_program_api]
+[scoring_post_purchase_queue] --> [scoring_worker]
+[scoring_process_queue] --> [scoring_post_purchase_worker]
 Rel(loyalty_program_admin_panel, loyalty_program_api, "Начисление/списание бонусов, изменение уровня лояльности, создание/редактирование промокодов")
 Rel(loyalty_program_api, loyalty_program_db, "Лояльность, промокоды")
-Rel(scoring_post_purchase_queue, scoring_worker, "Количество бонусов для начисления пользователю")
-Rel(scoring_process_queue, scoring_post_purchase_worker, "Количество бонусов для начисления пользователю")
+Rel(scoring_worker, loyalty_program_api, "Начисление бонусов")
+Rel(scoring_post_purchase_worker, loyalty_program_api, "Начисление бонусов")
 Rel(another_services, loyalty_program_api, "Запросы с внешних сервисов")
 
 @enduml
