@@ -11,6 +11,10 @@ services:
     ports:
       - "8006:8006"
 
+  admin_panel:
+    ports:
+      - "8007:8007"
+
 #  rabbitmq:
 #    ports:
 #      - "8020:15672"

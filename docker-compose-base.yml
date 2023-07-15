@@ -35,6 +35,15 @@ services:
     networks:
       - custom
 
+  admin_panel:
+    build:
+      context: ./loyalty_admin
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./.env
+    networks:
+      - custom
+
 #  rabbitmq:
 #    image: rabbitmq:3-management-alpine
 #    hostname: rabbitmq
