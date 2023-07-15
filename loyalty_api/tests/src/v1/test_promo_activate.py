@@ -44,6 +44,11 @@ async def test_promo_activate_ok(
         user_ids=user_ids,
         promo_code=promo_code,
     )
+    promo_activations = await create_promo_activation(
+        pool,
+        promo_id=promo.id,
+        user_id=user_id,
+    )
     test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
@@ -54,6 +59,9 @@ async def test_promo_activate_ok(
     loyalty_repository_mock.get_promo_activation.return_value = (
         user_promo_activation
     )
+    loyalty_repository_mock.create_promo_activation.return_value = (
+        promo_activations
+    )
 
     with test_app.container.loyalty_repository.override(
         loyalty_repository_mock
@@ -63,7 +71,7 @@ async def test_promo_activate_ok(
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"success": True, "result": "Ok", "errors": None}
 
-    user_promo_activation = get_promo_activation(pool, promo.id, user_id)
+    user_promo_activation = await get_promo_activation(pool, promo.id, user_id)
     assert user_promo_activation is not None
 
 

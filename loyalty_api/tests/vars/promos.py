@@ -140,3 +140,9 @@ async def get_promo_activation(pool, promo_id: int, user_id: str):
         queries.GET_PROMO_ACTIVATION, promo_id, user_id
     )
     return PromoActivateResponse.parse_obj(row_data) if row_data else None
+
+
+async def delete_user_promo_activation(pool, promo_id: int, user_id: str):
+    return await pool.execute(
+        queries.DELETE_USER_PROMO_ACTIVATION, promo_id, user_id
+    )
