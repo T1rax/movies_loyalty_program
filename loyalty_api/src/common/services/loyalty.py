@@ -42,7 +42,7 @@ class LoyaltyService:
                 )
         return promo
 
-    async def promo_activate(self, promo_code: str, user_id: str):
+    async def promo_activate(self, promo_code: str, user_id: str) -> str:
         promo = await self._repository.get_promo_by_promo_code(promo_code)
         if not promo or promo.deactivated:
             raise HTTPException(
@@ -82,7 +82,7 @@ class LoyaltyService:
 
         return "Ok"
 
-    async def promo_restore(self, promo_code: str, user_id: str):
+    async def promo_restore(self, promo_code: str, user_id: str) -> str:
         promo = await self._repository.get_promo_by_promo_code(promo_code)
         if not promo:
             raise HTTPException(

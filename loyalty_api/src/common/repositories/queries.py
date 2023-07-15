@@ -11,7 +11,7 @@ GET_PROMO_BY_PROMO_CODE = """
 """
 
 GET_PROMO_ACTIVATION = """
-    SELECT id, promo_id, user_id, activations_cnt
+    SELECT id, promo_id, user_id, created_dt, updated_dt
     FROM promos_activations
     WHERE promo_id=$1 and user_id=$2;
 """
