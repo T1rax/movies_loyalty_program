@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from src.api.models.promo import PromoInput, PromoResponse
+from src.api.models.promo import PromoHistoryParam, PromoInput, PromoResponse
 from src.common.exceptions import DatabaseError
 from src.common.promo import get_promo_code
 from src.common.repositories.loyalty import LoyaltyRepository
@@ -159,3 +159,6 @@ class LoyaltyService:
         await self._repository.set_flag_deactivated_promo(promo.id, True)
 
         return "Ok"
+
+    async def promo_history(self, param: PromoHistoryParam):
+        pass

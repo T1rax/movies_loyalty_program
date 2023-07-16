@@ -4,6 +4,7 @@ from src import settings
 from src.api.models.promo import (
     PromoActivateInputSrv,
     PromoDeactivateInputSrv,
+    PromoHistoryParam,
     PromoInput,
     PromoRestoreInputSrv,
 )
@@ -111,3 +112,27 @@ async def promo_deactivate(
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
     return await loyalty_service.promo_deactivate(body.promo_code)
+
+
+@router.get(
+    "/v1/promos/history",
+    summary="",
+    description="",
+    response_model=ApiResponse,
+)
+@inject
+@wrap_response
+async def promo_history(
+    token_header: str
+    | None = Header(None, alias=settings.token_settings.token_header),
+    param: PromoHistoryParam = Depends(),
+    loyalty_service: LoyaltyService = Depends(
+        Provide[Container.loyalty_service]
+    ),
+):
+    if not token_header:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")
+    if token_header not in settings.LOYALTY_SRV_TOKENS:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
+
+    return await loyalty_service.promo_history(param)
