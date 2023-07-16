@@ -75,10 +75,6 @@ class PromoDeactivateInputSrv(ORDJSONModelMixin):
 
 
 class PromoHistoryParam(ORDJSONModelMixin):
-    promo_id: int | None = Query(
-        title="ID промокода",
-        description="",
-    )
     user_id: str | None = Query(
         title="ID пользователя",
         description="",

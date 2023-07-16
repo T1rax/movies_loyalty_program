@@ -115,7 +115,7 @@ async def promo_deactivate(
 
 
 @router.get(
-    "/v1/promos/history",
+    "/v1/promos/{promo_id}/history",
     summary="",
     description="",
     response_model=ApiResponse,
@@ -123,6 +123,7 @@ async def promo_deactivate(
 @inject
 @wrap_response
 async def promo_history(
+    promo_id: int,
     token_header: str
     | None = Header(None, alias=settings.token_settings.token_header),
     param: PromoHistoryParam = Depends(),
@@ -135,4 +136,4 @@ async def promo_history(
     if token_header not in settings.LOYALTY_SRV_TOKENS:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
-    return await loyalty_service.promo_history(param)
+    return await loyalty_service.promo_history(param, promo_id)

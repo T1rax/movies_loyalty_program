@@ -160,5 +160,5 @@ class LoyaltyService:
 
         return "Ok"
 
-    async def promo_history(self, param: PromoHistoryParam):
+    async def promo_history(self, param: PromoHistoryParam):    async def promo_history(self, param: PromoHistoryParam, promo_id: int):
         pass
