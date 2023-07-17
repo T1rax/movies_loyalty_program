@@ -1,0 +1,47 @@
+@startuml
+
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.4.0
+!includeurl ICONURL/common.puml
+!include <C4/C4_Container>
+!include <C4/C4_Context>
+!include ICONURL/devicons/postgresql.puml
+!includeurl ICONURL/material/email.puml
+!includeurl ICONURL/material/queue.puml
+!includeurl ICONURL/material/schedule.puml
+skinparam backgroundColor MOTIVATION
+
+title [C2]: TO BE
+
+HIDE_STEREOTYPE()
+SHOW_PERSON_OUTLINE()
+
+Person(Marketer, "Администратор", "Создаёт промокоды, начисляет бонусы")
+
+System_Boundary(loyalty_program, "Программа лояльности") {
+    Container(loyalty_program_api, "Loyalty Program API", "Сервис для управления бонусной программой и промокодами")
+    Container(loyalty_program_admin_panel, "Loyalty Program Admin Panel", "Админ панель программы лояльности")
+    System_Boundary(workers, "Loyalty Program Controller") {
+        Container(scoring_worker, "Воркер начисления бонусов напрямую", "Отправляет запрос на начисление бонусов пользователю")
+        Container(scoring_post_purchase_worker, "Воркер начисления бонусов после покупки", "Отправляет запрос на начисление бонусов пользователю после покупки продукта")
+    }
+    Container(loyalty_program_db, "Loyalty Program DB", "БД бонусы, промокоды", $sprite="postgresql")
+}
+System_Boundary(rabbitmq, "RabbitMQ") {
+    Container(scoring_process_queue, "Очередь с сообщениями покупки", "user_id, points")
+    Container(scoring_post_purchase_queue, "Очередь для пополнения бонусов", "user_id, points")
+}
+System_Boundary(another_services, "Внешние сервисы") {
+    Container(auth_service, "Auth Service", "Сервис аутентификации")
+    Container(notifications_service, "Notifications Service", "Сервис нотификаций")
+}
+
+[Marketer] --> [loyalty_program_admin_panel]
+[scoring_post_purchase_queue] --> [scoring_worker]
+[scoring_process_queue] --> [scoring_post_purchase_worker]
+Rel(loyalty_program_admin_panel, loyalty_program_api, "Начисление/списание бонусов, изменение уровня лояльности, создание/редактирование промокодов")
+Rel(loyalty_program_api, loyalty_program_db, "Лояльность, промокоды")
+Rel(scoring_worker, loyalty_program_api, "Начисление бонусов")
+Rel(scoring_post_purchase_worker, loyalty_program_api, "Начисление бонусов")
+Rel(another_services, loyalty_program_api, "Запросы с внешних сервисов")
+
+@enduml
