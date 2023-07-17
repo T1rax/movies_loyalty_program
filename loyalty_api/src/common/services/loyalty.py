@@ -104,3 +104,42 @@ class LoyaltyService:
             await self._repository.set_flag_deactivated_promo(promo.id, False)
 
         return "Ok"
+
+    async def promo_status(self, promo_code: str, user_id: str):
+        promo = await self._repository.get_promo_by_promo_code(promo_code)
+        if not promo or promo.linked_to_user and user_id is None:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Сouldn't find a promo with this promo_code.",
+            )
+
+        if user_id is not None:
+            user_promo = await self._repository.get_user_promo(
+                user_id, promo.id
+            )
+            if not user_promo:
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail="Promo_code for user not found.",
+                )
+
+            user_promo_activation = (
+                await self._repository.get_promo_activation(promo.id, user_id)
+            )
+            if user_promo_activation:
+                raise HTTPException(
+                    status_code=HTTPStatus.CONFLICT,
+                    detail="User has already activated promo.",
+                )
+
+        promo_activation_cnt = await self._repository.get_promo_activation_cnt(
+            promo.id
+        )
+        if promo_activation_cnt >= promo.activations_limit:
+            await self._repository.set_flag_deactivated_promo(promo.id, False)
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail="Activation limit has been reached.",
+            )
+
+        return "Ok"
