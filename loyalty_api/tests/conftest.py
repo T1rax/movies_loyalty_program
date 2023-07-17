@@ -5,12 +5,15 @@ import asyncpg
 import psycopg2
 import pytest
 import pytest_asyncio
+from fastapi_limiter import FastAPILimiter
 from httpx import AsyncClient
+from redis import asyncio as aioredis
 from src.app import create_app
 from src.common.connectors.db import register_json
 
 
 DATABASE_URL = "postgresql://app:123qwe@localhost:6668/loyalty"
+REDIS_URL = "redis://localhost:8040"
 
 
 @pytest_asyncio.fixture
@@ -23,6 +26,26 @@ async def test_app():
 async def test_client(test_app):
     async with AsyncClient(app=test_app, base_url="http://test") as client:
         yield client
+
+
+@pytest_asyncio.fixture
+async def redis_client():
+    client = await aioredis.from_url(
+        url=REDIS_URL,
+        encoding="utf-8",
+        decode_responses=True,
+    )
+    yield client
+
+
+@pytest_asyncio.fixture
+async def fastapi_limiter(redis_client):
+    await FastAPILimiter.init(redis_client)
+
+
+@pytest_asyncio.fixture
+async def flush_redis(redis_client):
+    await redis_client.flushdb()
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
