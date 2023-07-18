@@ -1,12 +1,13 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from src import settings
+from src.api.models.base import Page
 from src.api.models.promo import (
     PromoActivateInputSrv,
     PromoDeactivateInputSrv,
     PromoHistoryParam,
     PromoInput,
-    PromoRestoreInputSrv,
+    PromoRestoreInputSrv, PromoHistoryResponse,
 )
 from src.common.responses import ApiResponse, wrap_response
 from src.common.services.promos import PromosService
@@ -122,7 +123,7 @@ async def get_promo_usage_history(
     | None = Header(None, alias=settings.token_settings.token_header),
     param: PromoHistoryParam = Depends(),
     promos_service: PromosService = Depends(Provide[Container.promos_service]),
-):
+) -> Page[PromoHistoryResponse]:
     if not token_header:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")
     if token_header not in settings.LOYALTY_SRV_TOKENS:

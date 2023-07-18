@@ -170,16 +170,7 @@ class PromosService:
         if param.user_id:
             promo_usage_history = list(
                 filter(
-                    lambda promo_usage: promo_usage.user_id == param.user_id,
-                    promo_usage_history,
-                )
-            )
-
-        if param.campaign_name:
-            promo_usage_history = list(
-                filter(
-                    lambda promo_usage: promo_usage.campaign_name
-                    == param.campaign_name,
+                    lambda promo_usage: str(promo_usage.user_id) == param.user_id,
                     promo_usage_history,
                 )
             )
