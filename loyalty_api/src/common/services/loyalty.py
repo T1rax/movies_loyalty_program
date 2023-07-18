@@ -11,7 +11,7 @@ from src.common.repositories.loyalty import LoyaltyRepository
 logger = logging.getLogger(__name__)
 
 
-class LoyaltyService:
+class PromosService:
     def __init__(
         self,
         repository: LoyaltyRepository,
@@ -160,5 +160,7 @@ class LoyaltyService:
 
         return "Ok"
 
-    async def promo_history(self, param: PromoHistoryParam):    async def promo_history(self, param: PromoHistoryParam, promo_id: int):
+    async def get_promo_usage_history(
+        self, param: PromoHistoryParam, promo_id: int
+    ):
         pass

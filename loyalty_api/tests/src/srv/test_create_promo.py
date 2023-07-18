@@ -63,9 +63,9 @@ async def test_create_promo_ok(
         promo_code=promo_code,
     )
     test_client.headers[settings.token_settings.token_header] = "test"
-    loyalty_service_mock = mock.AsyncMock(spec=LoyaltyRepository)
-    loyalty_service_mock.create_promo.return_value = promo
-    with test_app.container.loyalty_service.override(loyalty_service_mock):
+    promos_service_mock = mock.AsyncMock(spec=LoyaltyRepository)
+    promos_service_mock.create_promo.return_value = promo
+    with test_app.container.promos_service.override(promos_service_mock):
         response = await test_client.post("/api/srv/v1/promos", json=body)
 
     new_promo = await get_promo_by_id(pool, promo.id)
