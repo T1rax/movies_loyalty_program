@@ -3,9 +3,9 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 from src.api.models.promo import (
+    GetPromoStatusInput,
     PromoActivateInput,
     PromoRestoreInput,
-    PromoStatusInput,
 )
 from src.common.decode_auth_token import get_decoded_data
 from src.common.responses import ApiResponse, wrap_response
@@ -69,17 +69,25 @@ async def promo_restore(
 
 @router.post(
     "/promos/status",
-    summary="Получить статус промокода.",
-    description="Ручка для получения статуса промокода/скидки.",
+    summary="Получить статус возможности применения промокода.",
+    description="Ручка для получения статуса возможности применения промокода/скидки.",
     response_model=ApiResponse,
     dependencies=[Depends(RateLimiter(times=20, minutes=1))],
 )
 @inject
 @wrap_response
-async def promo_status(
-    body: PromoStatusInput = Body(...),
+async def get_promo_status(
+    user_data=Depends(get_decoded_data),
+    body: GetPromoStatusInput = Body(...),
     loyalty_service: LoyaltyService = Depends(
         Provide[Container.loyalty_service]
     ),
 ):
-    return await loyalty_service.promo_status(body.promo_code, body.user_id)
+    user_id = dpath.get(user_data, "user_id", default=None)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Undefined user.",
+        )
+
+    return await loyalty_service.get_promo_status(body.promo_code, user_id)
