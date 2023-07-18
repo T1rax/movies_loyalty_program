@@ -67,7 +67,3 @@ class PromoRestoreInputSrv(PromoRestoreInput):
 
 class GetPromoStatusInput(ORDJSONModelMixin):
     promo_code: str
-
-
-class GetPromoStatusInputSrv(GetPromoStatusInput):
-    user_id: str
