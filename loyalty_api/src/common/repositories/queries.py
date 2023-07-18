@@ -55,3 +55,10 @@ DELETE_USER_PROMO_ACTIVATION = """
     FROM promos_activations
     WHERE promo_id=$1 and user_id=$2;
 """
+
+GET_PROMO_USAGE_HISTORY = """
+    SELECT pa.id, pa.promo_id, p.campaign_name, pa.user_id, pa.created_dt, pa.updated_dt
+    FROM promos_activations pa
+    LEFT JOIN promos p ON p.id = pa.promo_id
+    WHERE pa.promo_id=$1;
+"""

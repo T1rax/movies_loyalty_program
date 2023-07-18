@@ -79,7 +79,11 @@ class PromoHistoryParam(ORDJSONModelMixin):
         title="ID пользователя",
         description="",
     )
-    promo_name: str | None = Query(
+    campaign_name: str | None = Query(
         title="Название компании",
         description="",
     )
+
+
+class PromoHistoryResponse(PromoActivateResponse):
+    campaign_name: str

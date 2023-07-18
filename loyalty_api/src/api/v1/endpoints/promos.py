@@ -9,7 +9,7 @@ from src.api.models.promo import (
 )
 from src.common.decode_auth_token import get_decoded_data
 from src.common.responses import ApiResponse, wrap_response
-from src.common.services.loyalty import PromosService
+from src.common.services.promos import PromosService
 from src.containers import Container
 from starlette import status
 

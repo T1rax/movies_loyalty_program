@@ -3,6 +3,7 @@ import logging
 from asyncpg import Record
 from src.api.models.promo import (
     PromoActivateResponse,
+    PromoHistoryResponse,
     PromoInput,
     PromoResponse,
 )
@@ -105,3 +106,11 @@ class LoyaltyRepository:
         return await self._db.pool.execute(
             queries.DELETE_USER_PROMO_ACTIVATION, promo_id, user_id
         )
+
+    async def get_promo_usage_history(
+        self, promo_id: int
+    ) -> list[PromoActivateResponse]:
+        rows = await self._db.pool.fetch(
+            queries.GET_PROMO_USAGE_HISTORY, promo_id
+        )
+        return [PromoHistoryResponse.parse_obj(row_data) for row_data in rows]

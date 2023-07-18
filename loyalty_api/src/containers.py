@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 from src.common.connectors import amqp, db, redis
 from src.common.repositories.loyalty import LoyaltyRepository
-from src.common.services.loyalty import PromosService
+from src.common.services.promos import PromosService
 
 
 class Container(containers.DeclarativeContainer):

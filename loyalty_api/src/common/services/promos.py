@@ -163,4 +163,25 @@ class PromosService:
     async def get_promo_usage_history(
         self, param: PromoHistoryParam, promo_id: int
     ):
-        pass
+        promo_usage_history = await self._repository.get_promo_usage_history(
+            promo_id
+        )
+
+        if param.user_id:
+            promo_usage_history = list(
+                filter(
+                    lambda promo_usage: promo_usage.user_id == param.user_id,
+                    promo_usage_history,
+                )
+            )
+
+        if param.campaign_name:
+            promo_usage_history = list(
+                filter(
+                    lambda promo_usage: promo_usage.campaign_name
+                    == param.campaign_name,
+                    promo_usage_history,
+                )
+            )
+
+        return promo_usage_history

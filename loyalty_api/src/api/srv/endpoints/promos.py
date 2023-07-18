@@ -9,7 +9,7 @@ from src.api.models.promo import (
     PromoRestoreInputSrv,
 )
 from src.common.responses import ApiResponse, wrap_response
-from src.common.services.loyalty import PromosService
+from src.common.services.promos import PromosService
 from src.containers import Container
 from starlette import status
 
