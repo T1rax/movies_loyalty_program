@@ -35,6 +35,22 @@ services:
     networks:
       - custom
 
+  redis:
+    image: redis
+    volumes:
+      - "redis_data:/opt/redis/data"
+    env_file:
+      - ./.env
+    expose:
+      - "${REDIS_PORT}"
+    networks:
+      - custom
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
 #  rabbitmq:
 #    image: rabbitmq:3-management-alpine
 #    hostname: rabbitmq
@@ -53,6 +69,7 @@ volumes:
     pgdata:
     rabbitmq_data:
     rabbitmq_logs:
+    redis_data:
 
 networks:
   custom:

@@ -1,5 +1,5 @@
 from dependency_injector import containers, providers
-from src.common.connectors import amqp, db
+from src.common.connectors import amqp, db, redis
 from src.common.repositories.loyalty import LoyaltyRepository
 from src.common.services.loyalty import LoyaltyService
 
@@ -11,6 +11,7 @@ class Container(containers.DeclarativeContainer):
 
     db_client = providers.Factory(db.DbConnector)
     amqp_client = providers.Factory(amqp.AMQPSenderPikaConnector)
+    redis_client = providers.Factory(redis.RedisConnector)
 
     loyalty_repository = providers.Factory(LoyaltyRepository, db=db_client)
 
