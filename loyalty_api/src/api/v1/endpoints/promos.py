@@ -76,8 +76,8 @@ async def promo_restore(
 async def get_promo_status(
     user_data=Depends(get_decoded_data),
     body: GetPromoStatusInput = Body(...),
-    loyalty_service: LoyaltyService = Depends(
-        Provide[Container.loyalty_service]
+    promos_service: PromosService = Depends(
+        Provide[Container.promos_service]
     ),
 ):
     user_id = dpath.get(user_data, "user_id", default=None)
@@ -87,4 +87,4 @@ async def get_promo_status(
             detail="Undefined user.",
         )
 
-    return await loyalty_service.get_promo_status(body.promo_code, user_id)
+    return await promos_service.get_promo_status(body.promo_code, user_id)
