@@ -3,6 +3,7 @@ from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from src import settings
 from src.api.models.promo import (
     PromoActivateInputSrv,
+    PromoDeactivateInputSrv,
     PromoInput,
     PromoRestoreInputSrv,
 )
@@ -85,3 +86,30 @@ async def promo_restore(
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
     return await loyalty_service.promo_restore(body.promo_code, body.user_id)
+
+
+@router.post(
+    "/v1/promos/deactivate",
+    summary="Деактивировать промокод.",
+    description="Ручка для деактивации промокода. "
+    "Промокод больше не будет действовать, но и не будет удален из БД.",
+    response_model=ApiResponse,
+)
+@inject
+@wrap_response
+async def promo_deactivate(
+    token_header: str
+    | None = Header(None, alias=settings.token_settings.token_header),
+    body: PromoDeactivateInputSrv = Body(...),
+    loyalty_service: LoyaltyService = Depends(
+        Provide[Container.loyalty_service]
+    ),
+):
+    if not token_header:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")
+    if token_header not in settings.LOYALTY_SRV_TOKENS:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
+
+    return await loyalty_service.promo_deactivate(
+        body.promo_code, body.user_id
+    )
