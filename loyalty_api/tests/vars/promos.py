@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from src.api.models.promo import (
     PromoActivateResponse,
+    PromoHistoryResponse,
     PromoResponse,
     PromoType,
 )
@@ -152,3 +153,13 @@ async def set_flag_deactivated_promo(pool, promo_id: int, flag: bool):
     return await pool.execute(
         queries.SET_FLAG_DEACTIVATED_PROMO, promo_id, flag
     )
+async def get_promo_usage_history_by_promo_ids(
+    pool, promo_ids: list
+) -> list[PromoHistoryResponse]:
+    if not promo_ids:
+        return []
+
+    rows = await pool.fetch(
+        queries.GET_PROMO_USAGE_HISTORY_BY_PROMO_IDS, promo_ids
+    )
+    return [PromoHistoryResponse.parse_obj(row_data) for row_data in rows]
