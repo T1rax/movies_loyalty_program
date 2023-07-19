@@ -143,31 +143,17 @@ class LoyaltyService:
 
         return "Ok"
 
-    async def promo_deactivate(self, promo_code: str, user_id: str) -> str:
+    async def promo_deactivate(self, promo_code: str) -> str:
         promo = await self._repository.get_promo_by_promo_code(promo_code)
-        if not promo or promo.deactivated:
+        if not promo:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail="Сouldn't find a promo with this promo_code.",
             )
-
-        if promo.linked_to_user:
-            user_promo = await self._repository.get_user_promo(
-                user_id, promo.id
-            )
-            if not user_promo:
-                raise HTTPException(
-                    status_code=HTTPStatus.NOT_FOUND,
-                    detail="Promo_code for user not found.",
-                )
-
-        user_promo_activation = await self._repository.get_promo_activation(
-            promo.id, user_id
-        )
-        if user_promo_activation:
+        if promo.deactivated:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
-                detail="The promo_code has already been used.",
+                detail="The promo_code has already been deactivated.",
             )
 
         await self._repository.set_flag_deactivated_promo(promo.id, True)

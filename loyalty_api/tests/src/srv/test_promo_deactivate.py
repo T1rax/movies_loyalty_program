@@ -4,43 +4,26 @@ from unittest import mock
 import pytest
 from src import settings
 from src.common.repositories.loyalty import LoyaltyRepository
-from tests.vars.promos import create_promo, get_promo_by_id
+from tests.vars.promos import create_promo, set_flag_deactivated_promo
 
 from loyalty_api.tests.vars.tables import LOYALTY_TABLES
 
 
-@pytest.mark.parametrize(
-    "user_ids",
-    (
-        ["a1bee0ec-02a2-42cf-9aa6-ee82835aabaf"],
-        [],
-    ),
-)
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [LOYALTY_TABLES], indirect=True)
-async def test_promo_deactivate_ok(pool, test_client, test_app, user_ids):
+async def test_promo_deactivate_ok(pool, test_client, test_app):
     promo_code = "7J2ep6M="
-    user_id = "a1bee0ec-02a2-42cf-9aa6-ee82835aabaf"
-    promo_activation_cnt = 0
-    user_promo_activation = None
-    body = {"promo_code": promo_code, "user_id": user_id}
+    body = {"promo_code": promo_code}
 
     promo = await create_promo(
         pool,
         campaign_name="test_campaign",
-        user_ids=user_ids,
         promo_code=promo_code,
     )
     test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
     loyalty_repository_mock.get_promo_by_promo_code.return_value = promo
-    loyalty_repository_mock.get_promo_activation_cnt.return_value = (
-        promo_activation_cnt
-    )
-    loyalty_repository_mock.get_promo_activation.return_value = (
-        user_promo_activation
-    )
 
     with test_app.container.loyalty_repository.override(
         loyalty_repository_mock
@@ -55,25 +38,18 @@ async def test_promo_deactivate_ok(pool, test_client, test_app, user_ids):
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [LOYALTY_TABLES], indirect=True)
-async def test_promo_deactivate_user_not_found(pool, test_client, test_app):
-    promo_code = "7J2ep6M="
-    user_id = "a1bee0ec-02a2-42cf-9aa6-ee82835aabaf"
-    user_promo_ids = ["a1bee0ec-02a2-42cf-9aa6-ee82835aaba3"]
-    user_promo = None
-    body = {"promo_code": promo_code, "user_id": user_id}
+async def test_promo_deactivate_not_found(pool, test_client, test_app):
+    body = {"promo_code": "6G1st8K="}
 
-    promo = await create_promo(
+    await create_promo(
         pool,
         campaign_name="test_campaign",
-        user_ids=user_promo_ids,
-        promo_code=promo_code,
+        promo_code="7J2ep6M=",
     )
-    new_promo = await get_promo_by_id(pool, promo.id)
     test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
-    loyalty_repository_mock.get_promo_by_promo_code.return_value = new_promo
-    loyalty_repository_mock.get_user_promo.return_value = user_promo
+    loyalty_repository_mock.get_promo_by_promo_code.return_value = None
 
     with test_app.container.loyalty_repository.override(
         loyalty_repository_mock
@@ -84,7 +60,7 @@ async def test_promo_deactivate_user_not_found(pool, test_client, test_app):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {
-        "errors": ["Promo_code for user not found."],
+        "errors": ["Сouldn't find a promo with this promo_code."],
         "result": None,
         "success": False,
     }
@@ -92,23 +68,21 @@ async def test_promo_deactivate_user_not_found(pool, test_client, test_app):
 
 @pytest.mark.usefixtures("clean_table")
 @pytest.mark.parametrize("clean_table", [LOYALTY_TABLES], indirect=True)
-async def test_promo_code_has_already_been_used(pool, test_client, test_app):
+async def test_promo_deactivate_already_deactivated(
+    pool, test_client, test_app
+):
     promo_code = "7J2ep6M="
-    user_id = "a1bee0ec-02a2-42cf-9aa6-ee82835aabaf"
-    activations_limit = 1
-    body = {"promo_code": promo_code, "user_id": user_id}
+    body = {"promo_code": promo_code}
 
     promo = await create_promo(
         pool,
         campaign_name="test_campaign",
         promo_code=promo_code,
-        activations_limit=activations_limit,
     )
+    await set_flag_deactivated_promo(pool, promo.id, True)
+    test_client.headers[settings.token_settings.token_header] = "test"
 
     loyalty_repository_mock = mock.AsyncMock(spec=LoyaltyRepository)
-    loyalty_repository_mock.get_promo_by_promo_code.return_value = promo
-    loyalty_repository_mock.get_promo_activation_cnt.return_value = 1
-    test_client.headers[settings.token_settings.token_header] = "test"
 
     with test_app.container.loyalty_repository.override(
         loyalty_repository_mock
@@ -119,7 +93,7 @@ async def test_promo_code_has_already_been_used(pool, test_client, test_app):
 
     assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {
-        "errors": ["The promo_code has already been used."],
+        "errors": ["The promo_code has already been deactivated."],
         "result": None,
         "success": False,
     }

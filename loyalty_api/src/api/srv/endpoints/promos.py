@@ -110,6 +110,4 @@ async def promo_deactivate(
     if token_header not in settings.LOYALTY_SRV_TOKENS:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
-    return await loyalty_service.promo_deactivate(
-        body.promo_code, body.user_id
-    )
+    return await loyalty_service.promo_deactivate(body.promo_code)
