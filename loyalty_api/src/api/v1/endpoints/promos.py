@@ -70,7 +70,7 @@ async def promo_restore(
 @router.post(
     "/promos/status",
     summary="Получить статус возможности применения промокода.",
-    description="Ручка для получения статуса возможности применения промокода/скидки."
+    description="Ручка для получения статуса возможности применения промокода/скидки. "
     "Используется фронтом для отображения 'зеленой галочки'",
     response_model=ApiResponse,
     dependencies=[Depends(RateLimiter(times=20, minutes=1))],

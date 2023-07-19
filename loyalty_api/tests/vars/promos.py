@@ -146,3 +146,9 @@ async def delete_user_promo_activation(pool, promo_id: int, user_id: str):
     return await pool.execute(
         queries.DELETE_USER_PROMO_ACTIVATION, promo_id, user_id
     )
+
+
+async def set_flag_deactivated_promo(pool, promo_id: int, flag: bool):
+    return await pool.execute(
+        queries.SET_FLAG_DEACTIVATED_PROMO, promo_id, flag
+    )
