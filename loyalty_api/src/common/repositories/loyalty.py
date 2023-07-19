@@ -3,6 +3,7 @@ import logging
 from asyncpg import Record
 from src.api.models.promo import (
     PromoActivateResponse,
+    PromoHistoryResponse,
     PromoInput,
     PromoResponse,
 )
@@ -67,6 +68,14 @@ class LoyaltyRepository:
         )
         return PromoResponse.parse_obj(row_data) if row_data else None
 
+    async def get_promo_by_campaign_name(
+        self, campaign_name: str
+    ) -> list[PromoResponse]:
+        rows = await self._db.pool.fetch(
+            queries.GET_PROMO_BY_CAMPAIGN_NAME, campaign_name
+        )
+        return [PromoResponse.parse_obj(row_data) for row_data in rows]
+
     async def get_promo_activation(
         self, promo_id: int, user_id: str
     ) -> PromoActivateResponse | None:
@@ -105,3 +114,22 @@ class LoyaltyRepository:
         return await self._db.pool.execute(
             queries.DELETE_USER_PROMO_ACTIVATION, promo_id, user_id
         )
+
+    async def get_promo_usage_history_by_promo_ids(
+        self, promo_ids: list
+    ) -> list[PromoHistoryResponse]:
+        if not promo_ids:
+            return []
+
+        rows = await self._db.pool.fetch(
+            queries.GET_PROMO_USAGE_HISTORY_BY_PROMO_IDS, promo_ids
+        )
+        return [PromoHistoryResponse.parse_obj(row_data) for row_data in rows]
+
+    async def get_promo_usage_history_by_user_id(
+        self, user_id: str
+    ) -> list[PromoHistoryResponse]:
+        rows = await self._db.pool.fetch(
+            queries.GET_PROMO_USAGE_HISTORY_BY_USER_ID, user_id
+        )
+        return [PromoHistoryResponse.parse_obj(row_data) for row_data in rows]

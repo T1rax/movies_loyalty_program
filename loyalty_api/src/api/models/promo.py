@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 from uuid import UUID
 
+from fastapi import Query
 from src.api.models.base import ORDJSONModelMixin
 
 
@@ -71,3 +72,24 @@ class GetPromoStatusInput(ORDJSONModelMixin):
 
 class PromoDeactivateInputSrv(ORDJSONModelMixin):
     promo_code: str
+
+
+class PromoHistoryFilterListing(ORDJSONModelMixin):
+    promo_id: int | None = Query(
+        title="ID промо-акции",
+    )
+    user_id: str | None = Query(
+        title="ID пользователя",
+    )
+    campaign_name: str | None = Query(
+        title="Название компании",
+    )
+
+
+class PromoHistoryResponse(ORDJSONModelMixin):
+    id: UUID
+    promo_id: int
+    user_id: UUID
+    created_dt: datetime
+    updated_dt: datetime | None
+    campaign_name: str

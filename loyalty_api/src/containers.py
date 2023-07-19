@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 from src.common.connectors import amqp, db, redis
 from src.common.repositories.loyalty import LoyaltyRepository
-from src.common.services.loyalty import LoyaltyService
+from src.common.services.promos import PromosService
 
 
 class Container(containers.DeclarativeContainer):
@@ -15,7 +15,7 @@ class Container(containers.DeclarativeContainer):
 
     loyalty_repository = providers.Factory(LoyaltyRepository, db=db_client)
 
-    loyalty_service = providers.Factory(
-        LoyaltyService,
+    promos_service = providers.Factory(
+        PromosService,
         repository=loyalty_repository,
     )

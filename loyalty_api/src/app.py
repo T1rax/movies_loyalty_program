@@ -3,6 +3,7 @@ import sys
 import uvicorn as uvicorn
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi_pagination import add_pagination
 from src.api import srv, v1
 from src.common.connectors.db import DbConnector
 from src.common.connectors.redis import RedisConnector
@@ -43,6 +44,8 @@ def create_app() -> FastAPI:
 
     app.include_router(srv.router)
     app.include_router(v1.router)
+
+    add_pagination(app)
 
     return app
 

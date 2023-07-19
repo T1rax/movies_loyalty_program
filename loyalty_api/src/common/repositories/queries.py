@@ -55,3 +55,23 @@ DELETE_USER_PROMO_ACTIVATION = """
     FROM promos_activations
     WHERE promo_id=$1 and user_id=$2;
 """
+
+GET_PROMO_USAGE_HISTORY_BY_PROMO_IDS = """
+    SELECT pa.id, pa.promo_id, p.campaign_name, pa.user_id, pa.created_dt, pa.updated_dt
+    FROM promos_activations pa
+    LEFT JOIN promos p ON p.id = pa.promo_id
+    WHERE pa.promo_id = ANY($1);
+"""
+
+GET_PROMO_BY_CAMPAIGN_NAME = """
+    SELECT id, campaign_name, promo_code, products, "type", "value", duration, activation_date, activations_limit, linked_to_user, deactivated, created_dt, updated_dt
+    FROM promos
+    WHERE campaign_name=$1;
+"""
+
+GET_PROMO_USAGE_HISTORY_BY_USER_ID = """
+    SELECT pa.id, pa.promo_id, p.campaign_name, pa.user_id, pa.created_dt, pa.updated_dt
+    FROM promos_activations pa
+    LEFT JOIN promos p ON p.id = pa.promo_id
+    WHERE pa.user_id = $1;
+"""

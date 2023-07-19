@@ -9,7 +9,7 @@ from src.api.models.promo import (
 )
 from src.common.decode_auth_token import get_decoded_data
 from src.common.responses import ApiResponse, wrap_response
-from src.common.services.loyalty import LoyaltyService
+from src.common.services.promos import PromosService
 from src.containers import Container
 from starlette import status
 
@@ -28,9 +28,7 @@ router = APIRouter()
 async def promo_activate(
     user_data=Depends(get_decoded_data),
     body: PromoActivateInput = Body(...),
-    loyalty_service: LoyaltyService = Depends(
-        Provide[Container.loyalty_service]
-    ),
+    promos_service: PromosService = Depends(Provide[Container.promos_service]),
 ):
     user_id = dpath.get(user_data, "user_id", default=None)
     if not user_id:
@@ -39,7 +37,7 @@ async def promo_activate(
             detail="Undefined user.",
         )
 
-    return await loyalty_service.promo_activate(body.promo_code, user_id)
+    return await promos_service.promo_activate(body.promo_code, user_id)
 
 
 @router.post(
@@ -53,9 +51,7 @@ async def promo_activate(
 async def promo_restore(
     user_data=Depends(get_decoded_data),
     body: PromoRestoreInput = Body(...),
-    loyalty_service: LoyaltyService = Depends(
-        Provide[Container.loyalty_service]
-    ),
+    promos_service: PromosService = Depends(Provide[Container.promos_service]),
 ):
     user_id = dpath.get(user_data, "user_id", default=None)
     if not user_id:
@@ -64,7 +60,7 @@ async def promo_restore(
             detail="Undefined user.",
         )
 
-    return await loyalty_service.promo_restore(body.promo_code, user_id)
+    return await promos_service.promo_restore(body.promo_code, user_id)
 
 
 @router.post(
@@ -80,8 +76,8 @@ async def promo_restore(
 async def get_promo_status(
     user_data=Depends(get_decoded_data),
     body: GetPromoStatusInput = Body(...),
-    loyalty_service: LoyaltyService = Depends(
-        Provide[Container.loyalty_service]
+    promos_service: PromosService = Depends(
+        Provide[Container.promos_service]
     ),
 ):
     user_id = dpath.get(user_data, "user_id", default=None)
@@ -91,4 +87,4 @@ async def get_promo_status(
             detail="Undefined user.",
         )
 
-    return await loyalty_service.get_promo_status(body.promo_code, user_id)
+    return await promos_service.get_promo_status(body.promo_code, user_id)
