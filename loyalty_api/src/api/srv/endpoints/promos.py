@@ -5,9 +5,10 @@ from src.api.models.base import Page
 from src.api.models.promo import (
     PromoActivateInputSrv,
     PromoDeactivateInputSrv,
-    PromoHistoryParam,
+    PromoHistoryFilterListing,
+    PromoHistoryResponse,
     PromoInput,
-    PromoRestoreInputSrv, PromoHistoryResponse,
+    PromoRestoreInputSrv,
 )
 from src.common.responses import ApiResponse, wrap_response
 from src.common.services.promos import PromosService
@@ -97,8 +98,8 @@ async def promo_deactivate(
     token_header: str
     | None = Header(None, alias=settings.token_settings.token_header),
     body: PromoDeactivateInputSrv = Body(...),
-    loyalty_service: LoyaltyService = Depends(
-        Provide[Container.loyalty_service]
+    promos_service: PromosService = Depends(
+        Provide[Container.promos_service]
     ),
 ):
     if not token_header:
@@ -106,27 +107,25 @@ async def promo_deactivate(
     if token_header not in settings.LOYALTY_SRV_TOKENS:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
-    return await loyalty_service.promo_deactivate(body.promo_code)
+    return await promos_service.promo_deactivate(body.promo_code)
 
 
 @router.get(
-    "/v1/promos/{promo_id}/history",
+    "/v1/promos/history",
     summary="",
     description="",
-    response_model=ApiResponse,
+    response_model=Page[PromoHistoryResponse],
 )
 @inject
-@wrap_response
 async def get_promo_usage_history(
-    promo_id: int,
     token_header: str
     | None = Header(None, alias=settings.token_settings.token_header),
-    param: PromoHistoryParam = Depends(),
+    query_param: PromoHistoryFilterListing = Depends(),
     promos_service: PromosService = Depends(Provide[Container.promos_service]),
-) -> Page[PromoHistoryResponse]:
+):
     if not token_header:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")
     if token_header not in settings.LOYALTY_SRV_TOKENS:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
-    return await promos_service.get_promo_usage_history(param, promo_id)
+    return await promos_service.get_promo_usage_history(query_param)

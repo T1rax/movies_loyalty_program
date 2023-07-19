@@ -2,7 +2,12 @@ import logging
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from src.api.models.promo import PromoHistoryParam, PromoInput, PromoResponse
+from fastapi_pagination import paginate
+from src.api.models.promo import (
+    PromoHistoryFilterListing,
+    PromoInput,
+    PromoResponse,
+)
 from src.common.exceptions import DatabaseError
 from src.common.promo import get_promo_code
 from src.common.repositories.loyalty import LoyaltyRepository
@@ -161,18 +166,47 @@ class PromosService:
         return "Ok"
 
     async def get_promo_usage_history(
-        self, param: PromoHistoryParam, promo_id: int
+        self, query_param: PromoHistoryFilterListing
     ):
-        promo_usage_history = await self._repository.get_promo_usage_history(
-            promo_id
-        )
+        promo_usage_history = []
+        if query_param.promo_id:
+            promo_usage_history = (
+                await self._repository.get_promo_usage_history_by_promo_ids(
+                    [query_param.promo_id]
+                )
+            )
 
-        if param.user_id:
+        if not query_param.promo_id and query_param.campaign_name:
+            promos = await self._repository.get_promo_by_campaign_name(
+                query_param.campaign_name
+            )
+            promo_ids = [promo.id for promo in promos]
+            promo_usage_history = (
+                await self._repository.get_promo_usage_history_by_promo_ids(
+                    promo_ids
+                )
+            )
+
+        if query_param.user_id and (
+            query_param.promo_id or query_param.campaign_name
+        ):
             promo_usage_history = list(
                 filter(
-                    lambda promo_usage: str(promo_usage.user_id) == param.user_id,
+                    lambda promo_usage: str(promo_usage.user_id)
+                    == query_param.user_id,
                     promo_usage_history,
                 )
             )
 
-        return promo_usage_history
+        if (
+            query_param.user_id
+            and not query_param.promo_id
+            and not query_param.campaign_name
+        ):
+            promo_usage_history = (
+                await self._repository.get_promo_usage_history_by_user_id(
+                    query_param.user_id
+                )
+            )
+
+        return paginate(sequence=promo_usage_history)
