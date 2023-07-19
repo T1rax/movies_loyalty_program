@@ -77,15 +77,12 @@ class PromoDeactivateInputSrv(ORDJSONModelMixin):
 class PromoHistoryFilterListing(ORDJSONModelMixin):
     promo_id: int | None = Query(
         title="ID промо-акции",
-        description="",
     )
     user_id: str | None = Query(
         title="ID пользователя",
-        description="",
     )
     campaign_name: str | None = Query(
         title="Название компании",
-        description="",
     )
 
 

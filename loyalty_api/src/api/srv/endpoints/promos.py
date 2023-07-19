@@ -112,8 +112,8 @@ async def promo_deactivate(
 
 @router.get(
     "/v1/promos/history",
-    summary="",
-    description="",
+    summary="История применения промокода/скидки.",
+    description="Ручка просмотра истории применении промокода/скидки.",
     response_model=Page[PromoHistoryResponse],
 )
 @inject

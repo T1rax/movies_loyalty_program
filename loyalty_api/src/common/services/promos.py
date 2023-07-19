@@ -169,6 +169,7 @@ class PromosService:
         self, query_param: PromoHistoryFilterListing
     ):
         promo_usage_history = []
+
         if query_param.promo_id:
             promo_usage_history = (
                 await self._repository.get_promo_usage_history_by_promo_ids(
