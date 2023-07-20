@@ -211,3 +211,13 @@ class PromosService:
             )
 
         return paginate(sequence=promo_usage_history)
+
+    async def get_promo_info(self, promo_code: str):
+        promo = await self._repository.get_promo_by_promo_code(promo_code)
+        if not promo:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Сouldn't find a promo with this promo_code.",
+            )
+
+        return promo
