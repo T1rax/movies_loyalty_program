@@ -127,3 +127,25 @@ async def get_promo_usage_history(
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
     return await promos_service.get_promo_usage_history(query_param)
+
+
+@router.get(
+    "/v1/promos/{promo_code}",
+    summary="Информация о промокоде/скидке.",
+    description="Ручка просмотра информации о промокоде/скидке.",
+    response_model=ApiResponse,
+)
+@inject
+@wrap_response
+async def get_promo_info(
+    promo_code: str,
+    token_header: str
+    | None = Header(None, alias=settings.token_settings.token_header),
+    promos_service: PromosService = Depends(Provide[Container.promos_service]),
+):
+    if not token_header:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")
+    if token_header not in settings.LOYALTY_SRV_TOKENS:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
+
+    return await promos_service.get_promo_info(promo_code)
