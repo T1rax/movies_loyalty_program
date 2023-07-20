@@ -98,9 +98,7 @@ async def promo_deactivate(
     token_header: str
     | None = Header(None, alias=settings.token_settings.token_header),
     body: PromoDeactivateInputSrv = Body(...),
-    promos_service: PromosService = Depends(
-        Provide[Container.promos_service]
-    ),
+    promos_service: PromosService = Depends(Provide[Container.promos_service]),
 ):
     if not token_header:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token required")

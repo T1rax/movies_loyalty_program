@@ -11,11 +11,15 @@ services:
     ports:
       - "8006:8006"
 
+  consumers:
+    environment:
+      - AMQP_URL=amqp://user:pass@rabbitmq:5672/test
+
   redis:
     ports:
       - "8040:6379"
 
-#  rabbitmq:
-#    ports:
-#      - "8020:15672"
-#      - "8030:5672"
+  rabbitmq:
+    ports:
+      - "8020:15672"
+      - "8030:5672"

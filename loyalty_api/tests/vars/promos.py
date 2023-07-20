@@ -153,6 +153,8 @@ async def set_flag_deactivated_promo(pool, promo_id: int, flag: bool):
     return await pool.execute(
         queries.SET_FLAG_DEACTIVATED_PROMO, promo_id, flag
     )
+
+
 async def get_promo_usage_history_by_promo_ids(
     pool, promo_ids: list
 ) -> list[PromoHistoryResponse]:
