@@ -76,9 +76,7 @@ async def promo_restore(
 async def get_promo_status(
     user_data=Depends(get_decoded_data),
     body: GetPromoStatusInput = Body(...),
-    promos_service: PromosService = Depends(
-        Provide[Container.promos_service]
-    ),
+    promos_service: PromosService = Depends(Provide[Container.promos_service]),
 ):
     user_id = dpath.get(user_data, "user_id", default=None)
     if not user_id:
