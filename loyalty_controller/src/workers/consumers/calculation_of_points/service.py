@@ -26,6 +26,10 @@ class CalculationOfPointsService:
 
         user_card_info = await self.get_user_card_info(user_id)
         if not user_card_info:
+            logger.info(
+                "Loyalty card was not found for the user: user_id %s",
+                user_id,
+            )
             return
 
         loyalty_level = user_card_info.loyalty_level

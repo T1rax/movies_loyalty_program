@@ -21,7 +21,7 @@ class LoyaltyApiClient(AsyncClient):
     async def get_card_info(self, user_id: str) -> dict:
         """Получить информацию по карте лояльности."""
 
-        url = f"/loyalty_cards/{user_id}"
+        url = f"/api/srv/loyalty_cards/{user_id}"
         params = {"user_id": user_id}
         response_body = await self.get(
             url=url, headers=self.default_headers, params=params
