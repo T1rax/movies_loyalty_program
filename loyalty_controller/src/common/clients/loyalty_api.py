@@ -20,9 +20,8 @@ class LoyaltyApiClient(AsyncClient):
         """Получить информацию по карте лояльности."""
 
         url = f"/api/srv/loyalty_cards/{user_id}"
-        params = {"user_id": user_id}
         response_body = await self.get(
-            url=url, headers=self.default_headers, params=params
+            url=url, headers=self.default_headers
         )
         response = response_body.json()
         return dpath.get(response, "result", default=None)  # type: ignore
