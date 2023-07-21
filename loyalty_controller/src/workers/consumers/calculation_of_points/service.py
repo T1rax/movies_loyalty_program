@@ -1,17 +1,13 @@
 import logging
 
-import dpath
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 from src.common.clients.loyalty_api import LoyaltyApiClient
 from src.common.connectors.amqp import AMQPSenderPikaConnector
+from src.common.exceptions import BadRequestError, ClientError, ServiceError
+from src.workers.models.loyalty_card import LoyaltyCardInfo, PaymentEventModel
 
 
 logger = logging.getLogger(__name__)
-
-
-class PaymentEventModel(BaseModel):
-    user_id: str
-    amount: int
 
 
 class CalculationOfPointsService:
@@ -24,13 +20,42 @@ class CalculationOfPointsService:
         self._amqp_sender = amqp_sender
 
     async def main(self, body: bytes) -> None:
-        pass
+        payment_event = self._load_model(body)
+        user_id, amount = payment_event.user_id, payment_event.amount
 
-    async def send_message(self, message: dict) -> None:
-        # {
-        #     "user_id": message.user_id,
-        #     "points": message.points,
-        # }
+        user_card_info = await self.get_user_card_info(user_id)
+        if not user_card_info:
+            return
+
+        points = await self.calculate_count_of_points(user_card_info, amount)
+        await self.send_message(user_id, points)
+
+    async def calculate_count_of_points(
+        self, user_card_info: LoyaltyCardInfo, amount: int
+    ) -> int:
+        loyalty_level = user_card_info.loyalty_level
+        points = int(amount / 100 * loyalty_level)
+        return points
+
+    async def get_user_card_info(self, user_id: str) -> LoyaltyCardInfo | None:
+        try:
+            user_card_info = await self._loyalty_api_client.get_card_info(
+                user_id
+            )
+        except (BadRequestError, ServiceError, ClientError):
+            logger.warning(
+                "Getting user card info error: user_id %s",
+                user_id,
+                exc_info=True,
+            )
+            return  # type: ignore
+        return LoyaltyCardInfo(**user_card_info) if user_card_info else None
+
+    async def send_message(self, user_id: str, points: int) -> None:
+        message = {
+            "user_id": user_id,
+            "points": points,
+        }
         try:
             await self._amqp_sender.amqp_sender.send(  # type: ignore
                 message=message,
