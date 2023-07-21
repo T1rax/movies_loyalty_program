@@ -51,14 +51,16 @@ def mock_external_services():
 
 @pytest.fixture
 async def mock_loyalty_api_ok(mock_external_services):
-    resp = dict(
-        loyalty_id="f51f3683-0000-402e-9cf4-785f840d0000",
-        user_id="f51f3683-7758-402e-9cf4-785f840d8738",
-        loyalty_level=5,
-        balance=100,
-        created_dt=datetime.now().isoformat(),
-        updated_dt=datetime.now().isoformat(),
-    )
+    resp = {
+        "result": dict(
+            loyalty_id="f51f3683-0000-402e-9cf4-785f840d0000",
+            user_id="f51f3683-7758-402e-9cf4-785f840d8738",
+            loyalty_level=5,
+            balance=100,
+            created_dt=datetime.now().isoformat(),
+            updated_dt=datetime.now().isoformat(),
+        )
+    }
     mock_external_services.get(
         re.compile(".*/api/srv/loyalty_cards.*")
     ).respond(

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import dpath
 from httpx import AsyncClient
 from settings.services import LoyaltyApiSettings
@@ -27,15 +25,7 @@ class LoyaltyApiClient(AsyncClient):
             url=url, headers=self.default_headers, params=params
         )
         response = response_body.json()
-        # return dpath.get(response, "result", default=None)  # type: ignore
-        return dict(
-            loyalty_id="loyalty_id_12345",
-            user_id=user_id,
-            loyalty_level=5,
-            balance=100,
-            created_dt=datetime.now(),
-            updated_dt=datetime.now(),
-        )
+        return dpath.get(response, "result", default=None)  # type: ignore
 
 
 def resolve_loyalty_api_client(config: LoyaltyApiSettings):
