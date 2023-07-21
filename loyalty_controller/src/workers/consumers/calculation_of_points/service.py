@@ -2,7 +2,6 @@ import logging
 
 import dpath
 from pydantic import BaseModel, ValidationError
-
 from src.common.clients.loyalty_api import LoyaltyApiClient
 from src.common.connectors.amqp import AMQPSenderPikaConnector
 

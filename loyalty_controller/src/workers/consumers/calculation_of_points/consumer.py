@@ -3,7 +3,10 @@ import logging
 import aio_pika
 from settings.consumers import BaseConsumerSettings
 from src.common.base_consumer import BaseConsumer
-from src.workers.consumers.calculation_of_points.service import CalculationOfPointsService
+from src.workers.consumers.calculation_of_points.service import (
+    CalculationOfPointsService,
+)
+
 
 logger = logging.getLogger(__name__)
 

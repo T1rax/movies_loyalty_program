@@ -2,9 +2,9 @@ import os
 import socket
 
 from pydantic import AmqpDsn, BaseSettings, PositiveInt
-
-from settings import LoyaltyApiSettings, CalculationOfPointsAmqpSender
 from settings.base import BaseConfig
+from settings.sender import CalculationOfPointsAmqpSender
+from settings.services import LoyaltyApiSettings
 
 
 class BaseConsumerSettings(BaseSettings):
