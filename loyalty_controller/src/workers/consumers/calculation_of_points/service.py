@@ -4,6 +4,7 @@ from pydantic import ValidationError
 from src.common.clients.loyalty_api import LoyaltyApiClient
 from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.common.exceptions import BadRequestError, ClientError, ServiceError
+from src.common.utils import calculate_percentages
 from src.workers.models.loyalty_card import LoyaltyCardInfo, PaymentEventModel
 
 
@@ -27,15 +28,9 @@ class CalculationOfPointsService:
         if not user_card_info:
             return
 
-        points = await self.calculate_count_of_points(user_card_info, amount)
-        await self.send_message(user_id, points)
-
-    async def calculate_count_of_points(
-        self, user_card_info: LoyaltyCardInfo, amount: int
-    ) -> int:
         loyalty_level = user_card_info.loyalty_level
-        points = int(amount / 100 * loyalty_level)
-        return points
+        points = calculate_percentages(loyalty_level, amount)
+        await self.send_message(user_id, points)
 
     async def get_user_card_info(self, user_id: str) -> LoyaltyCardInfo | None:
         try:
