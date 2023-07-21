@@ -10,11 +10,12 @@ from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.workers.consumers.calculation_of_points.service import (
     CalculationOfPointsService,
 )
+from tests.utils.amqp import MockAMQPSenderPikaConnector
 
 
 @pytest.fixture
 async def resolve_amqp_sender_connector():
-    return AMQPSenderPikaConnector(config={})
+    return MockAMQPSenderPikaConnector(config={})
 
 
 @pytest.fixture
@@ -25,7 +26,7 @@ async def test_loyalty_api_client():
 
 @pytest.fixture
 def calculation_of_points_service(
-    test_loyalty_api_client,
+    test_loyalty_api_client, resolve_amqp_sender_connector
 ) -> CalculationOfPointsService:
     container = punq.Container()
 
