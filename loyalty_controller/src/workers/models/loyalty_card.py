@@ -9,3 +9,8 @@ class PaymentEventModel(BaseModel):
 class LoyaltyCardInfo(BaseModel):
     user_id: str
     loyalty_level: int
+
+
+class DepositPointsModel(BaseModel):
+    user_id: str
+    points: int

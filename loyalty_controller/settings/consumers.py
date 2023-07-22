@@ -26,7 +26,12 @@ class CalculationOfPointsConfig(BaseConfig):
     calculation_of_points_consumer: BaseConsumerSettings
 
 
-class ConsumersConfig(CalculationOfPointsConfig):
+class DepositPointsConfig(BaseConfig):
+    # консьюмеры
+    deposit_points_consumer: BaseConsumerSettings
+
+
+class ConsumersConfig(CalculationOfPointsConfig, DepositPointsConfig):
     pass
 
 
@@ -51,6 +56,26 @@ CALCULATION_OF_POINTS_CONSUMER = {
     "routing_key": os.getenv(
         "CALCULATION_OF_POINTS_CONSUMER_ROUTING_KEY",
         default="event.payment",
+    ),
+    "consumer_tag": CONSUMER_TAG,
+}
+
+DEPOSIT_POINTS_CONSUMER = {
+    "url": os.getenv(
+        "DEPOSIT_POINTS_CONSUMER_AMQP_URL",
+        default="amqp://user:pass@rabbitmq:5672/test",
+    ),
+    "queue_name": os.getenv(
+        "DEPOSIT_POINTS_CONSUMER_QUEUE",
+        default="deposit_points.add",
+    ),
+    "exchange_name": os.getenv(
+        "DEPOSIT_POINTS_CONSUMER_EXCHANGE",
+        default="deposit_points.add",
+    ),
+    "routing_key": os.getenv(
+        "DEPOSIT_POINTS_CONSUMER_ROUTING_KEY",
+        default="event.add",
     ),
     "consumer_tag": CONSUMER_TAG,
 }

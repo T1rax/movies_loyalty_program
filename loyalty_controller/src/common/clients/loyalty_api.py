@@ -26,6 +26,22 @@ class LoyaltyApiClient(AsyncClient):
         response = response_body.json()
         return dpath.get(response, "result", default=None)  # type: ignore
 
+    async def refill_card(self, user_id: str, points: int) -> int:
+        """Пополнить счет карты лояльности."""
+
+        url = "/api/srv/loyalty_cards/refill"
+        parameters = {
+            'user_id': user_id,
+            'points': points,
+            'source': 'deposit_points_worker',
+        }
+        response = await self.post(
+            url=url,
+            headers=self.default_headers,
+            json=parameters,
+        )
+        return response.status_code
+
 
 def resolve_loyalty_api_client(config: LoyaltyApiSettings):
     return LoyaltyApiClient(

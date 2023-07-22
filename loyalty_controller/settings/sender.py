@@ -20,6 +20,6 @@ CALCULATION_OF_POINTS_SENDER = {
     ),
     "exchange": os.getenv(
         "CALCULATION_OF_POINTS_SENDER_EXCHANGE",
-        default="points.add",
+        default="deposit_points.add",
     ),
 }

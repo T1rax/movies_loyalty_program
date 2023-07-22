@@ -10,6 +10,9 @@ from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.workers.consumers.calculation_of_points.service import (
     CalculationOfPointsService,
 )
+from src.workers.consumers.deposit_points.service import (
+    DepositPointsService,
+)
 from tests.utils.amqp import MockAMQPSenderPikaConnector
 
 
@@ -44,6 +47,25 @@ def calculation_of_points_service(
 
 
 @pytest.fixture
+def deposit_points_service(
+    test_loyalty_api_client, resolve_amqp_sender_connector
+) -> CalculationOfPointsService:
+    container = punq.Container()
+
+    container.register(
+        service=LoyaltyApiClient,
+        instance=test_loyalty_api_client,
+    )
+    container.register(
+        service=AMQPSenderPikaConnector, instance=resolve_amqp_sender_connector
+    )
+
+    container.register(service=DepositPointsService)
+
+    yield container.resolve(DepositPointsService)
+
+
+@pytest.fixture
 def mock_external_services():
     with respx.mock(base_url="http://0.0.0.0/") as respx_mock:
         yield respx_mock
@@ -65,5 +87,15 @@ async def mock_loyalty_api_ok(mock_external_services):
         re.compile(".*/api/srv/loyalty_cards.*")
     ).respond(
         json=resp,
+        status_code=HTTPStatus.OK,
+    )
+
+    refill_resp = {
+        "result": "success"
+    }
+    mock_external_services.post(
+        re.compile(".*/api/srv/loyalty_cards/refill.*")
+    ).respond(
+        json=refill_resp,
         status_code=HTTPStatus.OK,
     )
