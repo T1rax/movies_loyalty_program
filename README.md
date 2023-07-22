@@ -2,6 +2,7 @@
 Программа лояльности для онлайн кинотеатра с промокодами и бонусным счетом
 
 ## Contributors
+Команда N5
 
 - Vladimir Nikishov - T1rax - @nikishov.va
 - Victoria Axentii - wiky-avis - @wikyavis
