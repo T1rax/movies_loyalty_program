@@ -7,6 +7,7 @@ from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.workers.consumers.calculation_of_points.consumer import (
     CalculationOfPointsConsumer,
 )
+from src.workers.consumers.deposit_points.consumer import DepositPointsConsumer
 
 
 logger = logging.getLogger(__name__)
@@ -18,10 +19,12 @@ class Runner(BaseRunner):
         amqp_sender: AMQPSenderPikaConnector,
         loyalty_api_client: LoyaltyApiClient,
         calculation_of_points_consumer: CalculationOfPointsConsumer,
+        deposit_points_consumer: DepositPointsConsumer,
     ):
         self._amqp_sender = amqp_sender
         self._loyalty_api_client = loyalty_api_client
         self._calculation_of_points_consumer = calculation_of_points_consumer
+        self._deposit_points_consumer = deposit_points_consumer
 
     @property
     def consumers(self):

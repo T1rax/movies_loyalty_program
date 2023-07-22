@@ -8,12 +8,10 @@ from src.common.connectors.amqp import (
     AMQPSenderPikaConnector,
     resolve_amqp_sender_client,
 )
-from src.workers.consumers.calculation_of_points.consumer import (
-    CalculationOfPointsConsumer,
-)
-from src.workers.consumers.calculation_of_points.service import (
-    CalculationOfPointsService,
-)
+from src.workers.consumers.calculation_of_points.consumer import CalculationOfPointsConsumer
+from src.workers.consumers.calculation_of_points.service import CalculationOfPointsService
+from src.workers.consumers.deposit_points.consumer import DepositPointsConsumer
+from src.workers.consumers.deposit_points.service import DepositPointsService
 
 
 def resolve_resources(config: ConsumersConfig) -> punq.Container:
@@ -30,11 +28,19 @@ def resolve_resources(config: ConsumersConfig) -> punq.Container:
         service=LoyaltyApiClient,
         instance=resolve_loyalty_api_client(config=config.loyalty_api_client),
     )
+
     container.register(service=CalculationOfPointsService)
     container.register(
         service=CalculationOfPointsConsumer,
         factory=CalculationOfPointsConsumer,
         config=config.calculation_of_points_consumer,
+    )
+
+    container.register(service=DepositPointsService)
+    container.register(
+        service=DepositPointsConsumer,
+        factory=DepositPointsConsumer,
+        config=config.deposit_points_consumer,
     )
 
     return container
