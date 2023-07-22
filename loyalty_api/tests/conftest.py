@@ -1,3 +1,4 @@
+import asyncio
 import subprocess
 from urllib.parse import urlsplit
 
@@ -5,24 +6,33 @@ import asyncpg
 import psycopg2
 import pytest
 import pytest_asyncio
+from fastapi.testclient import TestClient
 from fastapi_limiter import FastAPILimiter
 from httpx import AsyncClient
 from redis import asyncio as aioredis
 from src.app import create_app
 from src.common.connectors.db import register_json
+from src.common.decode_auth_token import get_decoded_data
+from src.settings.tokens import token_settings
+from tests.fake.jwt import fake_decode_token
 
 
 DATABASE_URL = "postgresql://app:123qwe@localhost:6668/loyalty"
 REDIS_URL = "redis://localhost:8040"
 
 
-@pytest_asyncio.fixture
+@pytest.fixture(scope="session")
+def event_loop():
+    return asyncio.get_event_loop()
+
+
+@pytest_asyncio.fixture(scope="session")
 async def test_app():
     app = create_app()
     yield app
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="session")
 async def test_client(test_app):
     async with AsyncClient(app=test_app, base_url="http://test") as client:
         yield client
@@ -87,3 +97,14 @@ async def pool():
     pool = await asyncpg.create_pool(DATABASE_URL, init=register_json)
     yield pool
     await pool.close()
+
+
+@pytest_asyncio.fixture(scope="session")
+async def test_api_client(test_app):
+    test_app.dependency_overrides[get_decoded_data] = fake_decode_token
+
+    client = TestClient(test_app)
+    default_headers = dict()
+    default_headers[token_settings.token_header] = "test"
+    client.headers = default_headers
+    yield client

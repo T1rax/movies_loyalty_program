@@ -1,6 +1,14 @@
 import logging
 
 from asyncpg import Record
+from src.api.models.loyalty_cards import (
+    LoyaltyCardBalanceHistoryResponse,
+    LoyaltyCardBalanceResponse,
+    LoyaltyCardFullInfoResponse,
+    LoyaltyCardInput,
+    LoyaltyCardResponse,
+    PointsLoyaltyCardInput,
+)
 from src.api.models.promo import (
     PromoActivateResponse,
     PromoHistoryResponse,
@@ -10,6 +18,7 @@ from src.api.models.promo import (
 from src.common.connectors.db import DbConnector
 from src.common.exceptions import DatabaseError
 from src.common.repositories import queries
+from src.settings.loyalty_cards import LOYALTY_LEVELS
 
 
 logger = logging.getLogger(__name__)
@@ -133,3 +142,123 @@ class LoyaltyRepository:
             queries.GET_PROMO_USAGE_HISTORY_BY_USER_ID, user_id
         )
         return [PromoHistoryResponse.parse_obj(row_data) for row_data in rows]
+
+    async def create_card(
+        self, data: LoyaltyCardInput
+    ) -> LoyaltyCardResponse | None:
+        try:
+            row_data = await self._db.pool.fetchrow(
+                queries.CREATE_CARD,
+                data.user_id,
+                LOYALTY_LEVELS[0],
+            )
+        except Exception:
+            logger.exception(
+                "Failed to create a new loyalty card: user_id %s",
+                data.user_id,
+                exc_info=True,
+            )
+            raise DatabaseError()
+        return LoyaltyCardResponse.parse_obj(row_data) if row_data else None
+
+    async def get_loyalty_card_by_user_id(
+        self, user_id: str
+    ) -> LoyaltyCardResponse | None:
+        row_data = await self._db.pool.fetchrow(
+            queries.GET_PROMO_BY_PROMO_CODE, user_id
+        )
+        return LoyaltyCardResponse.parse_obj(row_data) if row_data else None
+
+    async def get_loyalty_card_balance_by_user_id(
+        self, user_id: str
+    ) -> LoyaltyCardBalanceResponse | None:
+        row_data = await self._db.pool.fetchrow(
+            queries.GET_PROMO_BY_PROMO_CODE, user_id
+        )
+        return (
+            LoyaltyCardBalanceResponse.parse_obj(row_data)
+            if row_data
+            else None
+        )
+
+    async def get_full_loyalty_info_by_user_id(
+        self, user_id: str
+    ) -> LoyaltyCardFullInfoResponse | None:
+        row_data = await self._db.pool.fetchrow(
+            queries.GET_LOYALTY_CARD_FULL_INFO, user_id
+        )
+        return (
+            LoyaltyCardFullInfoResponse.parse_obj(row_data)
+            if row_data
+            else None
+        )
+
+    async def get_loyalty_card_balance_history_by_user_id(
+        self, user_id: str
+    ) -> list[LoyaltyCardBalanceHistoryResponse] | None:
+        rows = await self._db.pool.fetch(
+            queries.GET_PROMO_BY_PROMO_CODE, user_id
+        )
+        return [
+            LoyaltyCardBalanceHistoryResponse.parse_obj(record)
+            for record in rows
+        ]
+
+    async def loyalty_card_change_level(
+        self, user_id: str, loyalty_level: int
+    ) -> LoyaltyCardResponse | None:
+        try:
+            row_data = await self._db.pool.fetchrow(
+                queries.CHANGE_LOYALTY_LEVEL,
+                user_id,
+                loyalty_level,
+            )
+        except Exception:
+            logger.exception(
+                "Failed to update loyalty level: user_id %s, loyalty_level %s",
+                user_id,
+                loyalty_level,
+                exc_info=True,
+            )
+            raise DatabaseError()
+        return LoyaltyCardResponse.parse_obj(row_data) if row_data else None
+
+    async def refill_loyalty_card_points(
+        self, data: PointsLoyaltyCardInput
+    ) -> None:
+        try:
+            await self._db.pool.execute(
+                queries.POINTS_LOYALTY_CARD,
+                data.loyalty_id,
+                data.user_id,
+                data.points,
+                data.source,
+            )
+        except Exception:
+            logger.exception(
+                "Failed to add points to card: user_id %s, points %s",
+                data.user_id,
+                data.points,
+                exc_info=True,
+            )
+            raise DatabaseError()
+
+    async def deduct_loyalty_card_points(
+        self, data: PointsLoyaltyCardInput
+    ) -> None:
+        try:
+            await self._db.pool.execute(
+                queries.POINTS_LOYALTY_CARD,
+                data.loyalty_id,
+                data.user_id,
+                -data.points,
+                data.source,
+            )
+        except Exception:
+            logger.exception(
+                "Failed to deduct points from card: user_id %s, points %s",
+                data.user_id,
+                data.points,
+                exc_info=True,
+            )
+            raise DatabaseError()

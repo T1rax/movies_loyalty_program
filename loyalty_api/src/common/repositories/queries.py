@@ -75,3 +75,64 @@ GET_PROMO_USAGE_HISTORY_BY_USER_ID = """
     LEFT JOIN promos p ON p.id = pa.promo_id
     WHERE pa.user_id = $1;
 """
+
+CREATE_CARD = """
+    INSERT INTO loyalty_cards(user_id, loyalty_level)
+    VALUES ($1, $2)
+    RETURNING *;
+"""
+
+GET_LOYALTY_CARD_BY_USER_ID = """
+    SELECT id, user_id, loyalty_level, created_dt, updated_dt
+    FROM loyalty_cards
+    WHERE user_id=$1;
+"""
+
+CHANGE_LOYALTY_LEVEL = """
+    UPDATE loyalty_cards SET loyalty_level = $2, updated_dt = now()
+    WHERE user_id=$1
+    RETURNING *;
+"""
+
+POINTS_LOYALTY_CARD = """
+    INSERT INTO loyalty_transactions (loyalty_id, user_id, points, source)
+    VALUES ($1, $2, $3, $4);
+"""
+
+GET_LOYALTY_CARD_BALANCE = """
+    SELECT loyalty_id, user_id, sum(points) as balance
+    FROM loyalty_transactions
+    WHERE user_id = $1
+    GROUP BY loyalty_id, user_id;
+"""
+
+GET_LOYALTY_CARD_BALANCE_HISTORY = """
+    SELECT id, points, source, created_dt
+    FROM loyalty_transactions
+    WHERE user_id = $1
+    ORDER BY created_dt DESC;
+"""
+
+GET_LOYALTY_CARD_FULL_INFO = """
+    WITH card AS (
+        SELECT id, user_id, loyalty_level, created_dt, updated_dt
+        FROM loyalty_cards
+        WHERE user_id=$1;
+    ), balance AS (
+        SELECT loyalty_id, user_id, sum(points) as
+        FROM loyalty_transactions
+        WHERE user_id = $1
+        GROUP BY loyalty_id, user_id
+    )
+    SELECT
+        c.id
+        , c.user_id
+        , c.loyalty_level
+        , COALESCE(b.balance, 0)
+        , c.created_dt
+        , c.updated_dt
+    FROM card AS c
+    LEFT JOIN balance AS b
+        ON c.user_id = b.user_id
+    ;
+"""
