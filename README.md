@@ -37,6 +37,6 @@
 # Схемы в C4 нотации
 Их можно найти в папке docs.
 ## C1
-![Alt text](docs/to_be/c1.puml "C1")
+![Alt text](docs/to_be/img/C1___TO_BE.png "C1")
 ## C2
-![Alt text](docs/to_be/c2.puml "C1")
+![Alt text](docs/to_be/img/C2___TO_BE.png "C1")
