@@ -177,7 +177,7 @@ class PromosService:
                 )
             )
 
-        elif not query_param.promo_id and query_param.campaign_name:
+        if not query_param.promo_id and query_param.campaign_name:
             promos = await self._repository.get_promo_by_campaign_name(
                 query_param.campaign_name
             )
