@@ -25,11 +25,11 @@ class RedisConnector:
                 decode_responses=True,
             )
         except Exception:
-            logger.error("Redis client is not initialized", exc_info=True)
+            logger.exception("Redis client is not initialized", exc_info=True)
 
     @staticmethod
     async def close_client():
         try:
             await RedisConnector.client.close()
         except Exception:
-            logger.error("Redis client is not closed", exc_info=True)
+            logger.exception("Redis client is not closed", exc_info=True)

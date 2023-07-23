@@ -46,11 +46,11 @@ class DbConnector:
                 db_settings.db_url, init=register_json
             )
         except Exception:
-            logger.error("Db is not initialized", exc_info=True)
+            logger.exception("Db is not initialized", exc_info=True)
 
     @staticmethod
     async def disconnect():
         try:
             await DbConnector.pool.close()
         except Exception:
-            logger.error("Db is not disconnected", exc_info=True)
+            logger.exception("Db is not disconnected", exc_info=True)

@@ -135,6 +135,8 @@ class AMQPSenderPika(AMQPBase):
             logger.info(
                 "Waiting for opening pika channel for sending message..."
             )
+            await self.setup()
+            await self._send(message, exchange, routing_key)
 
     async def send(self, message, routing_key, exchange=None, *args, **kwargs):
         exchange = exchange if exchange else self.exchange
