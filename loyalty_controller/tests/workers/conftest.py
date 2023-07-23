@@ -10,9 +10,7 @@ from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.workers.consumers.calculation_of_points.service import (
     CalculationOfPointsService,
 )
-from src.workers.consumers.deposit_points.service import (
-    DepositPointsService,
-)
+from src.workers.consumers.deposit_points.service import DepositPointsService
 from tests.utils.amqp import MockAMQPSenderPikaConnector
 
 
@@ -90,9 +88,7 @@ async def mock_loyalty_api_ok(mock_external_services):
         status_code=HTTPStatus.OK,
     )
 
-    refill_resp = {
-        "result": "success"
-    }
+    refill_resp = {"result": "success"}
     mock_external_services.post(
         re.compile(".*/api/srv/loyalty_cards/refill.*")
     ).respond(

@@ -188,7 +188,7 @@ class PromosService:
                 )
             )
 
-        if query_param.user_id and (
+        elif query_param.user_id and (
             query_param.promo_id or query_param.campaign_name
         ):
             promo_usage_history = list(
@@ -199,7 +199,7 @@ class PromosService:
                 )
             )
 
-        if (
+        elif (
             query_param.user_id
             and not query_param.promo_id
             and not query_param.campaign_name

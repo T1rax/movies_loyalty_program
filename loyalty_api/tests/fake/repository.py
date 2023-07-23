@@ -98,7 +98,7 @@ class FakeLoyaltyRepository:
     async def get_loyalty_card_by_user_id(
         self, user_id: str
     ) -> LoyaltyCardResponse | None:
-        if user_id == 'test_create_uuid':
+        if user_id == "test_create_uuid":
             return None
 
         response = LoyaltyCardResponse(

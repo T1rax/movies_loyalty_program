@@ -3,9 +3,7 @@ import logging
 import aio_pika
 from settings.consumers import BaseConsumerSettings
 from src.common.base_consumer import BaseConsumer
-from src.workers.consumers.deposit_points.service import (
-    DepositPointsService,
-)
+from src.workers.consumers.deposit_points.service import DepositPointsService
 
 
 logger = logging.getLogger(__name__)

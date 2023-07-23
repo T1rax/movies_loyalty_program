@@ -30,7 +30,9 @@ class LoyaltyCardsService:
         self, data: LoyaltyCardInput
     ) -> LoyaltyCardResponse | None:
         try:
-            loyalty_card = await self._repository.get_loyalty_card_by_user_id(data.user_id)
+            loyalty_card = await self._repository.get_loyalty_card_by_user_id(
+                data.user_id
+            )
             if loyalty_card:
                 raise HTTPException(
                     status_code=HTTPStatus.FORBIDDEN,
@@ -59,19 +61,20 @@ class LoyaltyCardsService:
     def down_loyalty_level(self, current_level: int) -> int:
         try:
             index = LOYALTY_LEVELS.index(current_level)
-            if index == 0:
-                raise HTTPException(
-                    status_code=HTTPStatus.BAD_REQUEST,
-                    detail="User already has lowest level",
-                )
-
-            new_level = LOYALTY_LEVELS[index - 1]
-            return new_level
         except ValueError:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Unable to increase user's loyalty level",
             )
+
+        if index == 0:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="User already has lowest level",
+            )
+
+        new_level = LOYALTY_LEVELS[index - 1]
+        return new_level
 
     async def change_level(
         self, data: ChangeLoyaltyCardLevelInput
@@ -144,9 +147,7 @@ class LoyaltyCardsService:
                 detail="Failed to find loyalty card",
             )
 
-    async def refill_card(
-        self, data: PointsLoyaltyCardInput
-    ) -> str:
+    async def refill_card(self, data: PointsLoyaltyCardInput) -> str:
         try:
             loyalty_card = await self._repository.get_loyalty_card_by_user_id(
                 data.user_id
@@ -167,9 +168,7 @@ class LoyaltyCardsService:
                 detail="Failed to create new loyalty card.",
             )
 
-    async def deduct_card_balance(
-        self, data: PointsLoyaltyCardInput
-    ) -> str:
+    async def deduct_card_balance(self, data: PointsLoyaltyCardInput) -> str:
         try:
             loyalty_card = await self._repository.get_loyalty_card_by_user_id(
                 data.user_id

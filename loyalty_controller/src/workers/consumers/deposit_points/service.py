@@ -5,7 +5,7 @@ from pydantic import ValidationError
 from src.common.clients.loyalty_api import LoyaltyApiClient
 from src.common.connectors.amqp import AMQPSenderPikaConnector
 from src.common.exceptions import BadRequestError, ClientError, ServiceError
-from src.workers.models.loyalty_card import LoyaltyCardInfo, DepositPointsModel
+from src.workers.models.loyalty_card import DepositPointsModel, LoyaltyCardInfo
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class DepositPointsService:
                 logger.warning(
                     "Received error trying deposit points: user_id %s, http_code %s",
                     user_id,
-                    response_status
+                    response_status,
                 )
         except (BadRequestError, ServiceError, ClientError):
             logger.warning(
