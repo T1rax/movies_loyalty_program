@@ -177,7 +177,7 @@ class PromosService:
                 )
             )
 
-        if not query_param.promo_id and query_param.campaign_name:
+        elif not query_param.promo_id and query_param.campaign_name:
             promos = await self._repository.get_promo_by_campaign_name(
                 query_param.campaign_name
             )
@@ -187,18 +187,6 @@ class PromosService:
                     promo_ids
                 )
             )
-
-        elif query_param.user_id and (
-            query_param.promo_id or query_param.campaign_name
-        ):
-            promo_usage_history = list(
-                filter(
-                    lambda promo_usage: str(promo_usage.user_id)
-                    == query_param.user_id,
-                    promo_usage_history,
-                )
-            )
-
         elif (
             query_param.user_id
             and not query_param.promo_id
@@ -207,6 +195,17 @@ class PromosService:
             promo_usage_history = (
                 await self._repository.get_promo_usage_history_by_user_id(
                     query_param.user_id
+                )
+            )
+
+        if query_param.user_id and (
+            query_param.promo_id or query_param.campaign_name
+        ):
+            promo_usage_history = list(
+                filter(
+                    lambda promo_usage: str(promo_usage.user_id)
+                    == query_param.user_id,
+                    promo_usage_history,
                 )
             )
 
